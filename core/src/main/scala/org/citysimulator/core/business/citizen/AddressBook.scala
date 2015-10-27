@@ -5,7 +5,7 @@ package org.citysimulator.core.business.citizen
  * programmed tasks
  */
 class AddressBook {
-  private var book: scala.collection.mutable.Map[String, String] = scala.collection.mutable.Map.empty[String, String]
+  private val book: scala.collection.mutable.Map[String, String] = scala.collection.mutable.Map.empty[String, String]
 
   /**
    * Check if an address is already memorized
