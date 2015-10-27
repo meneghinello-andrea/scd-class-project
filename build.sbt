@@ -23,14 +23,16 @@ lazy val testLibraries = Seq(
 )
 
 val commonSettings = Seq(
-  commands              += consoleClearCommand,
-  licenses              += ("GPLv2.0" -> url("http://www.gnu.org/licenses/old-licenses/gpl-2.0.html")),
-  organization          := "org.citysimulator",
-  organizationName      := "Meneghinello di Andrea Meneghinello",
-  scalacOptions         := Seq("-unchecked", "-deprecation", "-encoding", "utf-8"),
-  scalaVersion          := "2.11.7",
-  startYear             := Some(2015),
-  version               := "1.0"
+  apiURL                          := Some(url("http://www.scala-lang.org/api/2.11.7/")),
+  autoAPIMappings                 := true,
+  commands                        += consoleClearCommand,
+  licenses                        += ("GPLv2.0" -> url("http://www.gnu.org/licenses/old-licenses/gpl-2.0.html")),
+  organization                    := "org.citysimulator",
+  organizationName                := "Meneghinello di Andrea Meneghinello",
+  scalacOptions in (Compile, doc) := Seq("-unchecked", "-deprecation", "-encoding", "utf-8"),
+  scalaVersion                    := "2.11.7",
+  startYear                       := Some(2015),
+  version                         := "1.0"
 )
 
 lazy val core = project.in(file("core"))
