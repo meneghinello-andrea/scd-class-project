@@ -15,5 +15,5 @@ import org.citysimulator.core.business.vehicle.Vehicles.Vehicles
 case class Citizen(id: String,
                    name: String,
                    vehicle: Vehicles,
-                   addressBook: AddressBook,
+                   addressBook: AddressBook = new AddressBook(),
                    var status: CitizenStatus = CitizenStatus.SLEEPING)
