@@ -9,5 +9,5 @@ import org.citysimulator.core.business.map.City
 object Vehicles extends Enumeration {
   type Vehicles = Value
 
-  val BUS, CAR, WALKER = Value
+  val BUS, CAR, PAWN = Value
 }
