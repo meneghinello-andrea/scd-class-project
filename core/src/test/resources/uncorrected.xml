@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <city name="manhattan" hostname="127.0.0.0" port="2550">
+        <district name="manhattan.upper_west_side" hostname="127.0.0.1" port="2551">
+            <crossroad name="manhattan.upper_west_side.crossroad_01">
+                <coordinate>
+                    <latitude>25</latitude>
+                    <longitude>25</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.upper_west_side.crossroad_02" />
+                    <address ref="manhattan.upper_west_side.crossroad_03" />
+                </neighbors>
+            </crossroad>
+            <crossroad name="manhattan.upper_west_side.crossroad_02">
+                <coordinate>
+                    <latitude>125</latitude>
+                    <longitude>25</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.upper_east_side.crossroad_01" />
+                    <address ref="manhattan.upper_west_side.crossroad_04" />
+                    <address ref="manhattan.upper_west_side.crossroad_01" />
+                </neighbors>
+            </crossroad>
+            <crossroad name="manhattan.upper_west_side.crossroad_03">
+                <coordinate>
+                    <latitude>25</latitude>
+                    <longitude>125</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.upper_west_side.crossroad_01" />
+                    <address ref="manhattan.upper_west_side.crossroad_04" />
+                    <address ref="manhattan.lower_west_side.crossroad_01" />
+                </neighbors>
+            </crossroad>
+            <crossroad name="manhattan.upper_west_side.crossroad_04">
+                <coordinate>
+                    <latitude>125</latitude>
+                    <longitude>125</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.upper_west_side.crossroad_02" />
+                    <address ref="manhattan.upper_east_side.crossroad_03" />
+                    <address ref="manhattan.lower_west_side.crossroad_02" />
+                    <address ref="manhattan.upper_west_side.crossroad_03" />
+                </neighbors>
+            </crossroad>
+        </district>
+        <district name="manhattan.upper_east_side" hostname="127.0.0.2" port="2552">
+            <crossroad name="manhattan.upper_east_side.crossroad_01">
+                <coordinate>
+                    <latitude>325</latitude>
+                    <longitude>25</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.upper_east_side.crossroad_02" />
+                    <address ref="manhattan.upper_east_side.crossroad_03" />
+                    <address ref="manhattan.upper_west_side.crossroad_02" />
+                </neighbors>
+            </crossroad>
+            <crossroad name="manhattan.upper_east_side.crossroad_02">
+                <coordinate>
+                    <latitude>425</latitude>
+                    <longitude>25</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.upper_east_side.crossroad_04" />
+                    <address ref="manhattan.upper_east_side.crossroad_01" />
+                </neighbors>
+            </crossroad>
+            <crossroad name="manhattan.upper_east_side.crossroad_03">
+                <coordinate>
+                    <latitude>325</latitude>
+                    <longitude>125</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.upper_east_side.crossroad_01" />
+                    <address ref="manhattan.upper_east_side.crossroad_04" />
+                    <address ref="manhattan.lower_east_side.crossroad_01" />
+                    <address ref="manhattan.upper_west_side.crossroad_04" />
+                </neighbors>
+            </crossroad>
+            <crossroad name="manhattan.upper_east_side.crossroad_04">
+                <coordinate>
+                    <latitude>425</latitude>
+                    <longitude>125</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.upper_east_side.crossroad_02" />
+                    <address ref="manhattan.lower_east_side.crossroad_02" />
+                    <address ref="manhattan.upper_east_side.crossroad_03" />
+                </neighbors>
+            </crossroad>
+        </district>
+        <district name="manhattan.lower_west_side" hostname="127.0.0.3" port="2553">
+            <crossroad name="manhattan.lower_west_side.crossroad_01">
+                <coordinate>
+                    <latitude>25</latitude>
+                    <longitude>325</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.upper_west_side.crossroad_03" />
+                    <address ref="manhattan.lower_west_side.crossroad_02" />
+                    <address ref="manhattan.lower_west_side.crossroad_03" />
+                </neighbors>
+            </crossroad>
+            <crossroad name="manhattan.lower_west_side.crossroad_02">
+                <coordinate>
+                    <latitude>125</latitude>
+                    <longitude>325</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.upper_west_side.crossroad_04" />
+                    <address ref="manhattan.lower_east_side.crossroad_01" />
+                    <address ref="manhattan.lower_west_side.crossroad_04" />
+                    <address ref="manhattan.lower_west_side.crossroad_01" />
+                </neighbors>
+            </crossroad>
+            <crossroad name="manhattan.lower_west_side.crossroad_03">
+                <coordinate>
+                    <latitude>25</latitude>
+                    <longitude>425</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.lower_west_side.crossroad_01" />
+                    <address ref="manhattan.lower_west_side.crossroad_04" />
+                </neighbors>
+            </crossroad>
+            <crossroad name="manhattan.lower_west_side.crossroad_04">
+                <coordinate>
+                    <latitude>125</latitude>
+                    <longitude>425</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.lower_west_side.crossroad_02" />
+                    <address ref="manhattan.lower_east_side.crossroad_03" />
+                    <address ref="manhattan.lower_west_side.crossroad_03" />
+                </neighbors>
+            </crossroad>
+        </district>
+        <district name="manhattan.lower_east_side" hostname="127.0.0.4" port="2554">
+            <crossroad name="manhattan.lower_east_side.crossroad_01">
+                <coordinate>
+                    <latitude>325</latitude>
+                    <longitude>325</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.upper_east_side.crossroad_03" />
+                    <address ref="manhattan.lower_east_side.crossroad_02" />
+                    <address ref="manhattan.lower_east_side.crossroad_03" />
+                    <address ref="manhattan.lower_west_side.crossroad_02" />
+                </neighbors>
+            </crossroad>
+            <crossroad name="manhattan.lower_east_side.crossroad_02">
+                <coordinate>
+                    <latitude>425</latitude>
+                    <longitude>325</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.upper_east_side.crossroad_04" />
+                    <address ref="manhattan.lower_east_side.crossroad_04" />
+                    <address ref="manhattan.lower_east_side.crossroad_01" />
+                </neighbors>
+            </crossroad>
+            <crossroad name="manhattan.lower_east_side.crossroad_03">
+                <coordinate>
+                    <latitude>325</latitude>
+                    <longitude>425</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.lower_east_side.crossroad_01" />
+                    <address ref="manhattan.lower_east_side.crossroad_04" />
+                    <address ref="manhattan.lower_west_side.crossroad_04" />
+                </neighbors>
+            </crossroad>
+            <crossroad name="manhattan.lower_east_side.crossroad_04">
+                <coordinate>
+                    <latitude>425</latitude>
+                    <longitude>425</longitude>
+                </coordinate>
+                <neighbors>
+                    <address ref="manhattan.lower_east_side.crossroad_02" />
+                    <address ref="manhattan.lower_east_side.crossroad_03" />
+                </neighbors>
+            </crossroad>
+        </district>
+    </city>
+    <population>
+        <citizen name="Jacob" vehicle="walker">
+            <addressBook>
+                <address ref="manhattan.upper_west_side.crossroad_01" key="home" />
+                <address ref="manhattan.lower_east_side.crossroad_02" key="work"/>
+            </addressBook>
+        </citizen>
+        <citizen name="Michael" vehicle="walker">
+            <addressBook>
+                <address ref="manhattan.upper_east_side.crossroad_03" key="home"/>
+                <address ref="manhattan.upper_east_side.crossroad_02" key="work"/>
+            </addressBook>
+        </citizen>
+        <citizen name="Joshua" vehicle="car">
+            <addressBook>
+                <address ref="manhattan.lower_west_side.crossroad_03" key="home"/>
+                <address ref="manhattan.lower_east_side.crossroad_04" key="work"/>
+            </addressBook>
+        </citizen>
+        <citizen name="Matthew" vehicle="car">
+            <addressBook>
+                <address ref="manhattan.upper_west_side.crossroad_04" key="home"/>
+                <address ref="manhattan.lower_east_side.crossroad_04" key="work"/>
+            </addressBook>
+        </citizen>
+        <citizen name="Andrew" vehicle="bus">
+            <addressBook>
+                <address ref="manhattan.upper_east_side.crossroad_01" key="home"/>
+                <address ref="manhattan.lower_east_side.crossroad_01" key="work"/>
+            </addressBook>
+        </citizen>
+        <citizen name="Alexander" vehicle="bus">
+            <addressBook>
+                <address ref="manhattan.lower_west_side.crossroad_01" key="home"/>
+                <address ref="manhattan.lower_east_side.crossroad_04" key="work"/>
+            </addressBook>
+        </citizen>
+        <citizen name="Nicholas" vehicle="bus">
+            <addressBook>
+                <address ref="manhattan.upper_west_side.crossroad_04" key="home"/>
+                <address ref="manhattan.upper_east_side.crossroad_04" key="work"/>
+            </addressBook>
+        </citizen>
+        <citizen name="Tyler" vehicle="bus">
+            <addressBook>
+                <address ref="manhattan.lower_east_side.crossroad_01" key="home"/>
+                <address ref="manhattan.upper_west_side.crossroad_01" key="work"/>
+            </addressBook>
+        </citizen>
+    </population>
+    <transport>
+        <bus run="around_town" capacity="3">
+            <stops>
+                <address ref="manhattan.upper_west_side.crossroad_01" />
+                <address ref="manhattan.upper_west_side.crossroad_04" />
+                <address ref="manhattan.upper_east_side.crossroad_01" />
+                <address ref="manhattan.upper_east_side.crossroad_04" />
+                <address ref="manhattan.lower_east_side.crossroad_01" />
+                <address ref="manhattan.lower_east_side.crossroad_04" />
+                <address ref="manhattan.lower_west_side.crossroad_04" />
+                <address ref="manhattan.lower_west_side.crossroad_01" />
+            </stops>
+        </bus>
+    </transport>
+</configuration>
