@@ -5,12 +5,10 @@ import org.citysimulator.core.business.citizen.{AddressBook, Citizen, CitizenSta
 /**
  * Represent a [[Citizen]] that travel in the city by foot
  *
- * @param id [[String]] identifier of the [[Citizen]]
- * @param name [[String]] name of the [[Citizen]]
- * @param addressBook [[AddressBook]] where the [[Citizen]] save important address
+ * @param citizen [[Citizen]] who travel by foot
  */
-class Pawn(id: String, name: String, addressBook: AddressBook = new AddressBook())
-  extends Citizen(id, name, Vehicles.WALKER, addressBook) with Vehicle {
+class Pawn(private val citizen: Citizen)
+  extends Citizen(citizen.id, citizen.name, citizen.vehicle, citizen.addressBook, citizen.status) with Vehicle {
 
   /**
    * Set the address of the next stop that the vehicle must reach
