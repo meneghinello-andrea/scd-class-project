@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xsl-stylesheet type="text/xsl" href=""?>
+
+<!--
+	This schema ensures that a city configuration for
+	the CitySimulator application has a tree type
+	with children in the exact order.
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <!--
+        The configuration element is the unique valid root element of the document. It also define
+        the key used to build constraint between elements.
+    -->
+    <xsd:element name="configuration" type="configurationType">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en-US">
+                The configuration element is the root element of the tree and it contains all the
+                elements to build a city during the bootstrap phase of the CitySimulator
+                application.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:key name="crossroadPrimaryKey">
+            <xsd:selector xpath=".//city/district/crossroad" />
+            <xsd:field xpath="@name" />
+        </xsd:key>
+        <xsd:keyref name="neighborsForeignKey" refer="crossroadPrimaryKey">
+            <xsd:selector xpath=".//city/district/crossroad/neighbors/address" />
+            <xsd:field xpath="@ref" />
+        </xsd:keyref>
+        <xsd:keyref name="personHomeForeignKey" refer="crossroadPrimaryKey">
+            <xsd:selector xpath=".//population/person/addressBook/address" />
+            <xsd:field xpath="@ref" />
+        </xsd:keyref>
+        <xsd:keyref name="personWorkForeignKey" refer="crossroadPrimaryKey">
+            <xsd:selector xpath=".//population/person/addressBook/address" />
+            <xsd:field xpath="@ref" />
+        </xsd:keyref>
+        <xsd:keyref name="busForeignKey" refer="crossroadPrimaryKey">
+            <xsd:selector xpath=".//transport/bus/stops/address" />
+            <xsd:field xpath="@ref" />
+        </xsd:keyref>
+    </xsd:element>
+
+    <!--
+        The configuration type contains:
+          - city: complex type that describe the city
+          - population: complex type that describe the population
+          - transport: complex type that describe the public transport system
+    -->
+    <xsd:complexType name="configurationType">
+        <xsd:sequence>
+            <xsd:element name="city" type="cityType" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The city element contains all the information used to build the city map
+                        during the bootstrap phase of the CitySimulator application.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="population" type="populationType" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The population element contains all the information used to populate the
+                        city during the bootstrap phase of the CitySimulator application.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="transport" type="transportType" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The transport element contains all the information used to build the public
+                        transport system, that operate in the city, during the bootstrap phase of the
+                        CitySimulator application.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!--
+        The city type contains:
+          - district: complex type that describe each single district
+
+        and it is identified by the attributes:
+          - name: non colonized name that identify the city
+          - hostname: IPv4 address of the host
+          - port: port on which the host listen for incoming connections
+    -->
+    <xsd:complexType name="cityType">
+        <xsd:sequence>
+            <xsd:element name="district" type="districtType" minOccurs="1" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The district element contains all the information used to build the districts
+                        that compose the city during the bootstrap phase of the CitySimulator application.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:NCName" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-US">
+                    The name attribute is used to identify univocally the city.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="hostname" type="hostnameType" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-US">
+                    The hostname attribute is used to identify the IPv4 address of the host on which
+                    the city is executed.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="port" type="portTCPType" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-US">
+                    The port attribute is used to identify the port on which the host listen for
+                    incoming connection.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <!--
+        The district type contains:
+          - crossroad: complex type that describe each single crossroad
+
+        and it is identified by the attributes:
+          - name: non colonized name that identify the district
+          - hostname: IPv4 address of the host
+          - port: port on which the host listen for incoming connections
+    -->
+    <xsd:complexType name="districtType">
+        <xsd:sequence>
+            <xsd:element name="crossroad" type="crossroadType" minOccurs="1" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The crossroad element contains all the information used to build the crossroads
+                        that compose the district during the bootstrap phase of the CitySimulator
+                        application.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:NCName" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-US">
+                    The name attribute is used to identify univocally the district in the city.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="hostname" type="hostnameType" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-US">
+                    The hostname attribute is used to identify the IPv4 address of the host on which
+                    the district is executed.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="port" type="portTCPType" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-US">
+                    The port attribute is used to identify the port on which the host listen for
+                    incoming connection.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <!--
+        The crossroad type contains:
+          - coordinate: a complex type that describe the crossroad coordinate
+          - neighbors: a complex type that contains the identifier of the neighbor crossroads
+
+        and it is identified by the attribute:
+          - name: non colonized name that identify the crossroad
+    -->
+    <xsd:complexType name="crossroadType">
+        <xsd:sequence>
+            <xsd:element name="coordinate" type="coordinateType" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The coordinate element contains the latitude and the longitude used to draw
+                        the crossroad on a screen.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="neighbors" type="neighborsType" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The neighbors element contains the identifier of the neighbors crossroad.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:NCName" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-US">
+                    The name attribute is used to identify univocally the crossroad inside the
+                    district.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <!--
+        The coordinate type contains:
+          - latitude: a simple element with restriction that describe X axis on a screen
+          - longitude: a simple element with restriction that describe Y axis on a screen
+    -->
+    <xsd:complexType name="coordinateType">
+        <xsd:sequence>
+            <xsd:element name="latitude" type="latitudeType" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The latitude element specify the crossroad latitude in pixel in a 2D screen.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="longitude" type="longitudeType" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The longitude element specify the crossroad longitude in pixel in a 2D screen.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!--
+        The latitude type describe the admitted value for the latitude
+    -->
+    <xsd:simpleType name="latitudeType">
+        <xsd:restriction base="xsd:integer">
+            <xsd:minInclusive value="0" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!--
+        The longitude type describe the admitted value for the longitude
+    -->
+    <xsd:simpleType name="longitudeType">
+        <xsd:restriction base="xsd:integer">
+            <xsd:minInclusive value="0" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!--
+        The neighbors type contains:
+          - address: complex type used to reference a valid crossroad in the city
+    -->
+    <xsd:complexType name="neighborsType">
+        <xsd:sequence>
+            <xsd:element name="address" type="addressType" minOccurs="1" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The crossroad identifier element is used to reference a valid crossroad in
+                        the city.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!--
+        The address type is identified by the attribute:
+          - ref: con colonized name that identify the crossroad
+          - key: identifier used to simplify the research of the address
+    -->
+    <xsd:complexType name="addressType">
+        <xsd:attribute name="ref" type="xsd:NCName" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-US">
+                    The ref attribute is used to reference to a valid crossroad name in the city
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="key" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-US">
+                    The key attribute is used to specify an identifier name for the address in order to facilitate
+                    its research
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <!--
+        The hostname type provide a regular expression that match with IPv4 addresses.
+    -->
+    <xsd:simpleType name="hostnameType">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="((1?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]).){3}(1?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!--
+        The portTCP type provide a restriction on the integer to match valid TCP port.
+    -->
+    <xsd:simpleType name="portTCPType">
+        <xsd:restriction base="xsd:integer">
+            <xsd:minInclusive value="1025" />
+            <xsd:maxInclusive value="65535" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!--
+        The population type contains:
+          - person: complex type that describe a single person in the city
+    -->
+    <xsd:complexType name="populationType">
+        <xsd:sequence>
+            <xsd:element name="citizen" type="citizenType" minOccurs="1" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The person element contains all the element to build a person that live
+                        in the city.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!--
+        The person type contains:
+          - home: a complex type with a reference of a valid crossroad in the city
+          - work: a complex type with a reference of a valid crossroad in the city
+
+        and it is identified by the attribute:
+          - name: string with the name of the person
+          - vehicle: a valid transport system (bus, car, pawn)
+    -->
+    <xsd:complexType name="citizenType">
+        <xsd:sequence>
+            <xsd:element name="addressBook" type="addressBookType" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The addresses contains all the addresses that the citizen visit in the city to complete its
+                        tasks
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-US">
+                    The name attribute provide a name for a person in the city.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="vehicle" type="vehicleType" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-US">
+                    The vehicle attribute specify the transport system adopted by the person to
+                    travel inside the city.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <!--
+        The address book type contains:
+          - address: a complex type with a reference of a valid crossroad in the city
+    -->
+    <xsd:complexType name="addressBookType">
+        <xsd:sequence>
+            <xsd:element name="address" type="addressType" minOccurs="1" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The crossroad identifier element is used to reference a valid crossroad in
+                        the city.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!--
+        The vehicle type specify the transport system allowed in the city
+    -->
+    <xsd:simpleType name="vehicleType">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="bus" />
+            <xsd:enumeration value="car" />
+            <xsd:enumeration value="pawn" />
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!--
+        The transport type contains:
+            - bus: complex type that describe the bus that operate in the city
+    -->
+    <xsd:complexType name="transportType">
+        <xsd:sequence>
+            <xsd:element name="bus" type="busType" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The bus element contains all the elements used to build a bus in the
+                        CitySimulator application.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <!--
+        The bus type contains:
+            - stop: a complex type with the references to crossroads that are bus stops
+
+        and it is identified by the attribute:
+            - name: non colonized name that identify the bus
+            - capacity: positive integer that identify the bus capacity
+    -->
+    <xsd:complexType name="busType">
+        <xsd:sequence>
+            <xsd:element name="stops" type="stopType" minOccurs="1" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The stop element contains valid references to crossroad that are bus stop
+                        in the city.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="run" type="xsd:NCName" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-US">
+                    The name attribute is used to identify a bus in the city.
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="capacity" type="xsd:positiveInteger" use="required">
+            <xsd:annotation>
+                <xsd:documentation xml:lang="en-US">
+                    The capacity attribute specify the bus capacity
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <!--
+        The stop type contains:
+            - crossroadIdentifier: a complex type with a reference of a valid crossroad in the city
+    -->
+    <xsd:complexType name="stopType">
+        <xsd:sequence>
+            <xsd:element name="address" type="addressType" minOccurs="2" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation xml:lang="en-US">
+                        The crossroad identifier element is used to reference a valid crossroad in
+                        the city.
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>
