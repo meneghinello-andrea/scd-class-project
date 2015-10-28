@@ -1,7 +1,7 @@
 package org.citysimulator.core.business.vehicle.test
 
-import org.citysimulator.core.business.citizen.CitizenStatus
-import org.citysimulator.core.business.vehicle.Pawn
+import org.citysimulator.core.business.citizen.{Citizen, CitizenStatus}
+import org.citysimulator.core.business.vehicle.{Pawn, Vehicles}
 
 import org.scalatest.{MustMatchers, WordSpec}
 
@@ -11,7 +11,7 @@ import org.scalatest.{MustMatchers, WordSpec}
 class PawnTest extends WordSpec with MustMatchers {
   "A city pawn" must {
     "respect the planned travel" in {
-      val pawn: Pawn = new Pawn("123", "name")
+      val pawn: Pawn = new Pawn(new Citizen("123", "name", Vehicles.PAWN))
       pawn.addressBook.insert("HOME", "manhattan.upper_west_side.crossroad_01")
       pawn.addressBook.insert("WORK", "manhattan.lower_east_side.crossroad_04")
 
@@ -29,7 +29,7 @@ class PawnTest extends WordSpec with MustMatchers {
     }
 
     "non change the programmed destination if the citizen status does not coincide with one of its tasks" in {
-      val pawn: Pawn = new Pawn("123", "name")
+      val pawn: Pawn = new Pawn(new Citizen("123", "name", Vehicles.PAWN))
       pawn.addressBook.insert("HOME", "manhattan.upper_west_side.crossroad_01")
       pawn.addressBook.insert("WORK", "manhattan.lower_east_side.crossroad_04")
 
