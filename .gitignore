@@ -6,3 +6,15 @@ target/
 *.class
 *.ipr
 *.iws
+
+*.aux
+*.glo
+*.ist
+*.lof
+*.log
+*.lot
+*.out
+*.pdf
+*.toc
+
+*-frn.tex

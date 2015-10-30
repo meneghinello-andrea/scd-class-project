@@ -1,0 +1,51 @@
+%------------------------------------------------------------------------------
+% preamble.tex
+%
+% Contains the document preamble with the inclusion of the
+% necessary packages necessary to build correctly the final
+% document.
+%------------------------------------------------------------------------------
+\documentclass[paper=A4, fontsize=11pt, parskip=full]{scrreprt}
+
+\usepackage{acronym}
+\usepackage{graphicx}
+\usepackage{ifthen}
+\usepackage{lastpage}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{pdfpages}
+\usepackage{sectsty}
+\usepackage{siunitx}
+\usepackage[utf8]{inputenc}
+\usepackage[babel]{csquotes}
+\usepackage[T1]{fontenc}
+\usepackage[hidelinks]{hyperref}
+\usepackage[english, italian]{babel}
+\usepackage[nonumberlist, toc]{glossaries}
+\usepackage[protrusion=true, expansion=true]{microtype}
+\usepackage[automark, headsepline, footsepline, markuppercase]{scrpage2}
+
+\allsectionsfont{\centering\normalfont\scshape}
+
+\pagestyle{scrheadings}
+
+\lehead{Sistemi Concorrenti e Distributi}
+\rohead{Simulatore di traffico}
+\chead{}
+\cfoot{\thepage{} di \pageref{LastPage}}
+
+\setglossarystyle{altlist}
+\makeglossaries
+
+\newcommand{\english}[1]{\foreignlanguage{english}{\textit{#1}}}
+\newcommand{\keyword}[1]{\textbf{#1}}
+\newcommand{\printTOC}[1]{\ifthenelse{\equal{#1}{TRUE}}{\tableofcontents{}}{}}
+\newcommand{\printTOF}[1]{\ifthenelse{\equal{#1}{TRUE}}{\listoffigures{}}{}}
+\newcommand{\printTOT}[1]{\ifthenelse{\equal{#1}{TRUE}}{\listoftables{}}{}}
+\newcommand{\printGLO}[1]{\ifthenelse{\equal{#1}{TRUE}}{\printglossary[title=Glossario]{}}{}}
+\newcommand{\glossarySng}[1]{\underline{\gls{#1}}}
+\newcommand{\glossaryPlr}[1]{\underline{\glspl{#1}}}
+
+\input{configuration/acronymDatabase.tex}
+
+\input{configuration/glossaryDatabase.tex}

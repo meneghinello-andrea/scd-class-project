@@ -1,0 +1,38 @@
+%------------------------------------------------------------------------------
+% master.tex
+%
+% This file contains all the directive to include the different
+% part of the document and build it during the compilation
+% phase.
+%
+% To compile correctly the entire document follow these
+% commands in a shell positioned in the folder that contains
+% the master document (master.tex):
+%
+%		1) pdflatex -output-directory cover/ cover/cover.tex
+%		2) pdflatex -output-directory cover/ cover/cover-frn.tex
+%		3) pdflatex -output-directory cover/ cover/cover.tex
+%		4) pdflatex master
+%   	5) makeglossaries master
+%		6) pdflatex master
+%		7) pdflatex master
+%------------------------------------------------------------------------------
+\input{configuration/preamble.tex}
+
+\begin{document}
+
+% Document cover
+\includepdf[pages={1}]{cover.pdf}
+\clearpage
+
+% Document indexes
+\printTOC{TRUE}
+\printTOF{TRUE}
+\printTOT{TRUE}
+
+% Document chapters
+
+% Glossary
+\clearpage
+\printGLO{TRUE}
+\end{document}
