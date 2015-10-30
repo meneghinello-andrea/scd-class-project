@@ -9,9 +9,11 @@ COVER_DIRECTORY					= cover
 
 REPORT_FILE_NAME				= master
 
+CHAPTERS						= chapters/abstract/abstract.tex
+
 .PHONY: clean clean_cover clean_master
 
-$(REPORT_FILE_NAME).pdf: $(CONFIGURATION) $(COVER_FILE_NAME).pdf
+$(REPORT_FILE_NAME).pdf: $(CONFIGURATION) $(COVER_FILE_NAME).pdf $(REPORT_FILE_NAME).tex $(CHAPTERS)
 	@$(COMPILER) $(REPORT_FILE_NAME).tex
 	@makeglossaries $(REPORT_FILE_NAME).tex
 	@$(COMPILER) $(REPORT_FILE_NAME).tex
