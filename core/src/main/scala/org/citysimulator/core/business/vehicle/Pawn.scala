@@ -20,4 +20,11 @@ class Pawn(private val citizen: Citizen)
       case _: Any =>
     }
   }
+
+  /**
+   * Get the address in the city where the vehicle start the simulation
+   *
+   * @return Return the [[String]] address name
+   */
+  override def startAddress: String = addressBook.get("HOME").get
 }

@@ -83,4 +83,11 @@ case class Bus(id: String, run: String, capacity: Int, stopsList: Vector[String]
       programmedStop = ""
     }
   }
+
+  /**
+   * Get the address in the city where the vehicle start the simulation
+   *
+   * @return Return the [[String]] address name
+   */
+  override def startAddress: String = stopsList.head
 }

@@ -20,4 +20,11 @@ case class Car(id: String, driver: Citizen) extends Vehicle {
       case _: Any =>
     }
   }
+
+  /**
+   * Get the address in the city where the vehicle start the simulation
+   *
+   * @return Return the [[String]] address name
+   */
+  override def startAddress: String = driver.addressBook.get("HOME").get
 }
