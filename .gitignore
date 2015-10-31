@@ -8,7 +8,9 @@ target/
 *.iws
 
 *.aux
+*.glg
 *.glo
+*.gls
 *.ist
 *.lof
 *.log
