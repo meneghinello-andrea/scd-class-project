@@ -33,6 +33,14 @@ object Bootstrap {
   case class CanIBeUseful(actor: ActorRef)
 
   /**
+   * The message inform the actor that one of its sub actors have complete the connection sub phase of the system
+   * bootstrap
+   *
+   * @param actor [[ActorRef]] of the sub actor that has complete the sub phase
+   */
+  case class ConnectionComplete(actor: ActorRef)
+
+  /**
    * The message inform the the new system that it is not recognized as a valid host for the system
    */
   case class HostUnacknowledged()
