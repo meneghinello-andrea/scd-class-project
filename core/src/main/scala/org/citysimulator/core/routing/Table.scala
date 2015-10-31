@@ -9,12 +9,19 @@ import akka.actor.ActorRef
 trait Table {
 
   /**
-   * Restore the table to the initial state
+   * Get all the address key memorized in the table
+   *
+   * @return Return an [[Iterable]] collection with the key associated to the addresses
+   */
+  def addresses: Iterable[String]
+
+  /**
+   * Empties the routing table
    */
   def clear(): Unit
 
   /**
-   * Get the number of entry registered in the table
+   * Get the number of addresses registered in the table
    *
    * @return Return the [[Int]] number of the entry actually registered
    */
@@ -44,14 +51,14 @@ trait Table {
   def lookup(address: String): Option[ActorRef]
 
   /**
-   * Refresh the entry in the table
+   * Refresh the address time in the table
    *
    * @param address [[String]] address name
    */
   def refresh(address: String): Unit
 
   /**
-   * Remove an entry from the table
+   * Remove an address from the table
    *
    * @param address [[String]] address name
    */

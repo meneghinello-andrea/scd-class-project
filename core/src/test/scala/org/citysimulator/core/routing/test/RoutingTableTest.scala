@@ -23,154 +23,216 @@ class RoutingTableTest extends TestKit(ActorSystem("RoutingTableTest")) with Wor
   "The routing table" must {
     "be empty when it is created" in {
       val routingTable: RoutingTable = new RoutingTable(5)
-      val addresses = PrivateMethod[Iterable[String]]('addresses)
-      val get = PrivateMethod[Option[RoutingEntry]]('get)
 
-      routingTable.count must be(0)
-      routingTable.isEmpty must be(TRUE)
-
-      val iterator: Iterator[String] = routingTable.invokePrivate(addresses()).iterator
-      var counter = 0
-      while (iterator.hasNext) {
-        val address: String = iterator.next()
-        val entry: Option[RoutingEntry] = routingTable.invokePrivate(get(address))
-
-        counter += 1
-        address must fullyMatch regex """address.none.\d*""".r
-        entry.isDefined must be(TRUE)
-        entry.get.address must fullyMatch regex """address.none.\d*""".r
-        entry.get.nextHop.isDefined must be(FALSE)
-      }
-
-      counter must be(routingTable.capacity)
+      routingTable.addresses must be (Seq.empty[String])
+      routingTable.count must be (0)
+      routingTable.isEmpty must be (TRUE)
     }
 
     "permit the insertion of a new route found by the algorithm" in {
       val routingTable: RoutingTable = new RoutingTable(5)
-      val addresses = PrivateMethod[Iterable[String]]('addresses)
-      val get = PrivateMethod[Option[RoutingEntry]]('get)
-
       val address: String = "manhattan.upper_west_side.crossroad_01"
-      val nextHop: TestProbe = TestProbe()
-      routingTable.insert(address, nextHop.ref)
+      val nextHop: ActorRef = TestProbe().ref
 
-      routingTable.count must be(1)
-      routingTable.isEmpty must be(FALSE)
+      routingTable.addresses must be (Seq.empty[String])
+      routingTable.count must be (0)
+      routingTable.isEmpty must be (TRUE)
 
-      val entry: Option[RoutingEntry] = routingTable.invokePrivate(get(address))
-      entry.isDefined must be(TRUE)
-      entry.get.address must be(address)
-      entry.get.nextHop.isDefined must be(TRUE)
-      entry.get.nextHop.get must be(nextHop.ref)
+      routingTable.insert(address, nextHop)
 
-      var counter = 0
-      val iterator: Iterator[String] = routingTable.invokePrivate(addresses()).iterator
-      while (iterator.hasNext) {
-        counter += 1
-        iterator.next()
-      }
-      counter must be(routingTable.capacity)
+      routingTable.addresses must contain (address)
+      routingTable.count must be (1)
+      routingTable.isEmpty must be (FALSE)
     }
 
-    "get the next hop information about a key" in {
-      val routingTable: RoutingTable = new RoutingTable(5)
-      val get = PrivateMethod[Option[RoutingEntry]]('get)
+    "not contain routing information over its capacity" in {
+      val routingTable: RoutingTable = new RoutingTable(2)
+      val address_01: String = "manhattan.upper_west_side.crossroad_01"
+      val address_02: String = "manhattan.upper_west_side.crossroad_02"
+      val address_03: String = "manhattan.upper_west_side.crossroad_03"
+      val nextHop_01: ActorRef = TestProbe().ref
+      val nextHop_02: ActorRef = TestProbe().ref
+      val nextHop_03: ActorRef = TestProbe().ref
 
-      val address: String = "manhattan.upper_west_side.crossroad_01"
-      val nextHop: TestProbe = TestProbe()
-      routingTable.insert(address, nextHop.ref)
+      routingTable.addresses must be (Seq.empty[String])
+      routingTable.count must be (0)
+      routingTable.isEmpty must be (TRUE)
 
-      routingTable.count must be(1)
-      routingTable.isEmpty must be(FALSE)
+      routingTable.insert(address_01, nextHop_01)
 
-      val entry: Option[ActorRef] = routingTable.lookup(address)
-      entry.isDefined must be(TRUE)
-      entry.get must be(nextHop.ref)
+      routingTable.count must be (1)
+      routingTable.isEmpty must be (FALSE)
+
+      routingTable.insert(address_02, nextHop_02)
+
+      routingTable.count must be (2)
+      routingTable.isEmpty must be (FALSE)
+
+      routingTable.insert(address_03, nextHop_03)
+
+      routingTable.count must be (2)
+      routingTable.isEmpty must be (FALSE)
     }
 
-    "be empty when it is cleaned" in {
-      val routingTable: RoutingTable = new RoutingTable(5)
-      val addresses = PrivateMethod[Iterable[String]]('addresses)
-      val get = PrivateMethod[Option[RoutingEntry]]('get)
+    "replace the older route information when there is no available place" in {
+      val routingTable: RoutingTable = new RoutingTable(2)
+      val address_01: String = "manhattan.upper_west_side.crossroad_01"
+      val address_02: String = "manhattan.upper_west_side.crossroad_02"
+      val address_03: String = "manhattan.upper_west_side.crossroad_03"
+      val nextHop_01: ActorRef = TestProbe().ref
+      val nextHop_02: ActorRef = TestProbe().ref
+      val nextHop_03: ActorRef = TestProbe().ref
 
-      routingTable.count must be(0)
-      routingTable.isEmpty must be(TRUE)
+      routingTable.addresses must be (Seq.empty[String])
 
-      var iterator: Iterator[String] = routingTable.invokePrivate(addresses()).iterator
-      var counter = 0
-      while (iterator.hasNext) {
-        val address: String = iterator.next()
-        val entry: Option[RoutingEntry] = routingTable.invokePrivate(get(address))
+      routingTable.insert(address_01, nextHop_01)
 
-        counter += 1
-        address must fullyMatch regex """address.none.\d*""".r
-        entry.isDefined must be(TRUE)
-        entry.get.address must fullyMatch regex """address.none.\d*""".r
-        entry.get.nextHop.isDefined must be(FALSE)
-      }
+      routingTable.addresses must contain (address_01)
 
-      counter must be(routingTable.capacity)
+      Thread.sleep(500)
+      routingTable.insert(address_02, nextHop_02)
 
-      val address: String = "manhattan.upper_west_side.crossroad_01"
-      val nextHop: TestProbe = TestProbe()
-      routingTable.insert(address, nextHop.ref)
+      routingTable.addresses must contain (address_01)
+      routingTable.addresses must contain (address_02)
 
-      routingTable.clear()
+      routingTable.insert(address_03, nextHop_03)
 
-      routingTable.count must be(0)
-      routingTable.isEmpty must be(TRUE)
-
-      iterator = routingTable.invokePrivate(addresses()).iterator
-      counter = 0
-      while (iterator.hasNext) {
-        val address: String = iterator.next()
-        val entry: Option[RoutingEntry] = routingTable.invokePrivate(get(address))
-
-        counter += 1
-        address must fullyMatch regex """address.none.\d*""".r
-        entry.isDefined must be(TRUE)
-        entry.get.address must fullyMatch regex """address.none.\d*""".r
-        entry.get.nextHop.isDefined must be(FALSE)
-      }
-
-      counter must be(routingTable.capacity)
+      routingTable.addresses must not contain address_01
+      routingTable.addresses must contain (address_02)
+      routingTable.addresses must contain (address_03)
     }
+  }
 
-    "refresh the freshness of a route if it is used" in {
-      val routingTable: RoutingTable = new RoutingTable(5)
-      val get = PrivateMethod[Option[RoutingEntry]]('get)
+  "get the next hop information about an address memorized" in {
+    val routingTable: RoutingTable = new RoutingTable(5)
+    val address: String = "manhattan.upper_west_side.crossroad_01"
+    val nextHop: ActorRef = TestProbe().ref
 
-      val address: String = "manhattan.upper_west_side.crossroad_01"
-      val nextHop: TestProbe = TestProbe()
-      routingTable.insert(address, nextHop.ref)
+    routingTable.insert(address, nextHop)
 
-      val older: Long = routingTable.invokePrivate(get(address)).get.inserted
-      Thread.sleep(1000)
-      routingTable.refresh(address)
-      val newer: Long = routingTable.invokePrivate(get(address)).get.inserted
+    routingTable.lookup(address).isDefined must be (TRUE)
+    routingTable.lookup(address).get must be (nextHop)
+  }
 
-      older must (be < newer)
-    }
+  "get no information about a destination if the address isn't memorized in it" in {
+    val routingTable: RoutingTable = new RoutingTable(5)
+    val address_01: String = "manhattan.upper_west_side.crossroad_01"
+    val address_02: String = "manhattan.upper_west_side.crossroad_02"
+    val nextHop_01: ActorRef = TestProbe().ref
 
-    "update the routing information" in {
-      val routingTable: RoutingTable = new RoutingTable(5)
-      val get = PrivateMethod[Option[RoutingEntry]]('get)
+    routingTable.insert(address_01, nextHop_01)
 
-      val address: String = "manhattan.upper_west_side.crossroad_01"
-      val nextHop_01: TestProbe = TestProbe()
-      val nextHop_02: TestProbe = TestProbe()
+    routingTable.lookup(address_02).isDefined must be (FALSE)
+  }
 
-      routingTable.insert(address, nextHop_01.ref)
+  "be empty when it is cleaned" in {
+    val routingTable: RoutingTable = new RoutingTable(2)
+    val address_01: String = "manhattan.upper_west_side.crossroad_01"
+    val address_02: String = "manhattan.upper_west_side.crossroad_02"
+    val nextHop_01: ActorRef = TestProbe().ref
+    val nextHop_02: ActorRef = TestProbe().ref
 
-      var entry: Option[ActorRef] = routingTable.lookup(address)
-      entry.isDefined must be (TRUE)
-      entry.get must be (nextHop_01.ref)
+    routingTable.insert(address_01, nextHop_01)
+    routingTable.insert(address_02, nextHop_02)
 
-      routingTable.update(address, nextHop_02.ref)
+    routingTable.count must be (2)
+    routingTable.isEmpty must be (FALSE)
 
-      entry= routingTable.lookup(address)
-      entry.isDefined must be (TRUE)
-      entry.get must be (nextHop_02.ref)
-    }
+    routingTable.clear()
+
+    routingTable.count must be (0)
+    routingTable.isEmpty must be (TRUE)
+  }
+
+  "permit to refresh the freshness of a route information" in {
+    val routingTable: RoutingTable = new RoutingTable(2)
+    val address_01: String = "manhattan.upper_west_side.crossroad_01"
+    val address_02: String = "manhattan.upper_west_side.crossroad_02"
+    val address_03: String = "manhattan.upper_west_side.crossroad_03"
+    val nextHop_01: ActorRef = TestProbe().ref
+    val nextHop_02: ActorRef = TestProbe().ref
+    val nextHop_03: ActorRef = TestProbe().ref
+
+    routingTable.insert(address_01, nextHop_01)
+    routingTable.insert(address_02, nextHop_02)
+
+    routingTable.addresses must contain (address_01)
+    routingTable.addresses must contain (address_02)
+
+    //Thread.sleep(1000)
+    routingTable.refresh(address_01)
+
+    routingTable.addresses must contain (address_01)
+    routingTable.addresses must contain (address_02)
+
+    routingTable.insert(address_03, nextHop_03)
+
+    routingTable.addresses must contain (address_01)
+    routingTable.addresses must not contain address_02
+    routingTable.addresses must contain (address_03)
+  }
+
+  "permit the deletion of a route information" in {
+    val routingTable: RoutingTable = new RoutingTable(2)
+    val address_01: String = "manhattan.upper_west_side.crossroad_01"
+    val address_02: String = "manhattan.upper_west_side.crossroad_02"
+    val nextHop_01: ActorRef = TestProbe().ref
+    val nextHop_02: ActorRef = TestProbe().ref
+
+    routingTable.count must be (0)
+    routingTable.isEmpty must be (TRUE)
+
+    routingTable.insert(address_01, nextHop_01)
+    routingTable.insert(address_02, nextHop_02)
+
+    routingTable.count must be (2)
+    routingTable.isEmpty must be (FALSE)
+
+    routingTable.remove(address_01)
+
+    routingTable.addresses must not contain address_01
+    routingTable.addresses must contain (address_02)
+    routingTable.count must be (1)
+    routingTable.isEmpty must be (FALSE)
+  }
+
+  "permit to update the information of a memorized route" in {
+    val routingTable: RoutingTable = new RoutingTable(2)
+    val address_01: String = "manhattan.upper_west_side.crossroad_01"
+    val nextHop_01: ActorRef = TestProbe().ref
+    val nextHop_02: ActorRef = TestProbe().ref
+
+    routingTable.count must be (0)
+
+    routingTable.insert(address_01, nextHop_01)
+
+    routingTable.addresses must contain (address_01)
+    routingTable.count must be (1)
+    routingTable.lookup(address_01).isDefined must be (TRUE)
+    routingTable.lookup(address_01).get must be (nextHop_01)
+
+    routingTable.update(address_01, nextHop_02)
+
+    routingTable.addresses must contain (address_01)
+    routingTable.count must be (1)
+    routingTable.lookup(address_01).isDefined must be (TRUE)
+
+    routingTable.lookup(address_01).get must be (nextHop_02)
+  }
+
+  "insert the route information if the update operation found that the route does not exist" in {
+    val routingTable: RoutingTable = new RoutingTable(2)
+    val address_01: String = "manhattan.upper_west_side.crossroad_01"
+    val nextHop_01: ActorRef = TestProbe().ref
+    val nextHop_02: ActorRef = TestProbe().ref
+
+    routingTable.count must be (0)
+
+    routingTable.update(address_01, nextHop_01)
+
+    routingTable.addresses must contain (address_01)
+    routingTable.count must be (1)
+    routingTable.lookup(address_01).isDefined must be (TRUE)
+    routingTable.lookup(address_01).get must be (nextHop_01)
   }
 }
