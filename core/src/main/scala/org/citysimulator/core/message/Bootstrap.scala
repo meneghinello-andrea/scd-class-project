@@ -52,8 +52,10 @@ object Bootstrap {
 
   /**
    * The message inform the actor that it can start the population phase
+   *
+   * @param actors [[Vector]] with the actor that must be populated
    */
-  case class StartPopulating()
+  case class StartPopulating(actors: Vector[ActorRef])
 
   /**
    * The message inform the actor that it is recognized as a valid host for the system
