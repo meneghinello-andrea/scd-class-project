@@ -8,8 +8,7 @@ import org.citysimulator.core.message.Bootstrap.{StartConnection, StartPopulatin
 class MasterBootstrapHandlerActor(private val expected: Int) extends BootstrapHandler(expected) {
 
   /**
-   * Sub classes can override this method to define an appropriate strategy adopted when all the sub components
-   * have complete their birth
+   * Communicate that the sub component must start the connection phase
    */
   protected override def birthPhaseCompleteStrategy(): Unit = {
     componentsList.par.foreach(actor => {
@@ -19,8 +18,7 @@ class MasterBootstrapHandlerActor(private val expected: Int) extends BootstrapHa
   }
 
   /**
-   * Sub classes can override this method to define an appropriate strategy adopted when all the sub components
-   * have complete the connection
+   * Communicate that the sub component must start the populating phase
    */
   protected override def connectionPhaseCompleteStrategy(): Unit = {
     context.parent ! StartPopulating(componentsList)

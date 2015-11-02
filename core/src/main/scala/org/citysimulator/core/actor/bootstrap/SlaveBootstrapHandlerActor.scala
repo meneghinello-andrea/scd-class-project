@@ -11,8 +11,7 @@ class SlaveBootstrapHandlerActor(private val chief: ActorRef, private val expect
   extends BootstrapHandler(expected) {
 
   /**
-   * Sub classes can override this method to define an appropriate strategy adopted when all the sub components
-   * have complete their birth
+   * Communicate to master component the completion of the local birth phase
    */
   protected override def birthPhaseCompleteStrategy(): Unit = {
     componentsList.par.foreach(actor => {
@@ -22,8 +21,7 @@ class SlaveBootstrapHandlerActor(private val chief: ActorRef, private val expect
   }
 
   /**
-   * Sub classes can override this method to define an appropriate strategy adopted when all the sub components
-   * have complete the connection
+   * Communicate to master component the completion of the local bootstrap phase
    */
   protected override def connectionPhaseCompleteStrategy(): Unit = {
     chief ! BootstrapComplete(context.parent)
