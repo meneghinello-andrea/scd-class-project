@@ -34,22 +34,23 @@ class AODVActor(addressName: String, neighborsList: Vector[Host]) extends Actor 
         val actorSystemPort: Int = neighborAddress.port
         val crossroadName: String = addressComponents.last
         val actorPath: String =
-          s"""akka.tcp://$actorSystemName@$actorSystemAddress:$actorSystemPort/user/district/$crossroadName"""
+          s"""akka.tcp://$actorSystemName@$actorSystemAddress:$actorSystemPort/user/$actorSystemName/$crossroadName"""
+        log.debug(s"start search of $actorPath}")
 
         for (neighbor <- context.actorSelection(actorPath).resolveOne()) {
           neighbors += neighbor
-          log.debug(s"[Actor (${self.path.name})]: memorized the remote reference to ${neighbor.path.name}")
+          log.debug(s"memorized the remote reference to ${neighbor.path.name}")
 
           context.watch(neighbor)
-          log.debug(s"[Actor (${self.path.name})]: watch life behavior of ${neighbor.path.name}")
+          log.debug(s"watch life behavior of ${neighbor.path.name}")
         }
       })
 
       context.parent ! ConnectionComplete(self)
-      log.debug(s"[Actor (${self.path.name})]: parent informed about the completion of the connection sub phase")
+      log.debug(s"parent informed about the completion of the connection sub phase")
 
       context.become(faultTolerantPhase orElse operationPhase)
-      log.debug(s"[Actor (${self.path.name})]: enters in operation mode")
+      log.debug(s"enters in operation mode")
   }
 
   /**
@@ -58,17 +59,17 @@ class AODVActor(addressName: String, neighborsList: Vector[Host]) extends Actor 
   protected def faultTolerantPhase: Receive = {
     case Terminated(actor: ActorRef) =>
       neighbors -= actor
-      log.debug(s"[Actor (${self.path.name})]: removed the old reference to ${actor.path.name}")
+      log.debug(s"removed the old reference to ${actor.path.name}")
 
       context.unwatch(actor)
-      log.debug(s"[Actor (${self.path.name})]: unwatch life behaviour of the old reference of ${actor.path.name}")
+      log.debug(s"unwatch life behaviour of the old reference of ${actor.path.name}")
 
       for(neighbor <- context.actorSelection(actor.path).resolveOne()) {
         neighbors += neighbor
-        log.debug(s"[Actor (${self.path.name})]: memorized the remote reference to ${neighbor.path.name}")
+        log.debug(s"memorized the remote reference to ${neighbor.path.name}")
 
         context.watch(neighbor)
-        log.debug(s"[Actor (${self.path.name})]: watch life behavior of ${neighbor.path.name}")
+        log.debug(s"watch life behavior of ${neighbor.path.name}")
       }
   }
 
@@ -81,10 +82,10 @@ class AODVActor(addressName: String, neighborsList: Vector[Host]) extends Actor 
 
       if (route.isDefined) {
         context.parent ! RouteFound(address, route.get)
-        log.debug(s"[Actor (${self.path.name})]: parent must contact ${route.get.path.name} to reach $address")
+        log.debug(s"parent must contact ${route.get.path.name} to reach $address")
       } else {
         self ! RouteRequest(address, TIME_TO_LIVE)
-        log.debug(s"[Actor (${self.path.name})]: start route searching of $address")
+        log.debug(s"start route searching of $address")
       }
 
     case RouteRequest(address: String, timeToLive: Int) =>
@@ -92,22 +93,22 @@ class AODVActor(addressName: String, neighborsList: Vector[Host]) extends Actor 
         if (address.equals(addressName)) {
           //I'm the searched address
           self ! RouteResponse(address, self, TIME_TO_LIVE)
-          log.debug(s"[Actor (${self.path.name})]: I'm the destination RREP for $address sent")
+          log.debug(s"I'm the destination RREP for $address sent")
         } else {
           //I'm not the searched address
           neighbors.filter(neighbor => neighbor != self).par.foreach(neighbor => {
             neighbor ! RouteRequest(address, timeToLive - 1)
-            log.debug(s"[Actor (${self.path.name})]: sent RREQ for $address to ${neighbor.path.name}")
+            log.debug(s"sent RREQ for $address to ${neighbor.path.name}")
           })
         }
       }
 
     case RouteResponse(address: String, nextHop: ActorRef, timeToLive: Int) =>
       routingTable.update(address, nextHop)
-      log.debug(s"[Actor (${self.path.name})]: updated local routing table ($address, ${nextHop.path.name})")
+      log.debug(s"updated local routing table ($address, ${nextHop.path.name})")
 
       context.parent ! RouteFound(address, nextHop)
-      log.debug(s"[Actor (${self.path.name})]: parent informed about the route for $address")
+      log.debug(s"parent informed about the route for $address")
 
       if (timeToLive > 0) {
         neighbors.filter(neighbor => neighbor != self).par.foreach(neighbor => {
@@ -118,11 +119,11 @@ class AODVActor(addressName: String, neighborsList: Vector[Host]) extends Actor 
     case StartShutdown() =>
       neighbors.par.foreach(neighbor => {
         context.unwatch(neighbor)
-        log.debug(s"[Actor (${self.path.name})]: unwatch life behaviour of the old reference of ${neighbor.path.name}")
+        log.debug(s"unwatch life behaviour of the old reference of ${neighbor.path.name}")
       })
 
       self ! PoisonPill
-      log.debug(s"[Actor (${self.path.name})]: terminate the routing algorithm")
+      log.debug(s"terminate the routing algorithm")
   }
 
   /**

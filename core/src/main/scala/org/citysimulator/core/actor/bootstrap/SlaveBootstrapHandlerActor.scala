@@ -14,10 +14,8 @@ class SlaveBootstrapHandlerActor(private val chief: ActorRef, private val expect
    * Communicate to master component the completion of the local birth phase
    */
   protected override def birthPhaseCompleteStrategy(): Unit = {
-    componentsList.par.foreach(actor => {
-      chief ! BirthComplete(context.parent)
-      log.debug(s"[Actor (${self.path.name})]: sends bootstrap complete to ${chief.path.name}")
-    })
+    chief ! BirthComplete(context.parent)
+    log.debug(s"send birth complete to ${chief.path.name}")
   }
 
   /**
@@ -25,6 +23,6 @@ class SlaveBootstrapHandlerActor(private val chief: ActorRef, private val expect
    */
   protected override def connectionPhaseCompleteStrategy(): Unit = {
     chief ! BootstrapComplete(context.parent)
-    log.debug(s"[Actor (${self.path.name})]: sends bootstrap complete to ${chief.path.name}")
+    log.debug(s"send bootstrap complete to ${chief.path.name}")
   }
 }

@@ -13,7 +13,7 @@ class MasterBootstrapHandlerActor(private val expected: Int) extends BootstrapHa
   protected override def birthPhaseCompleteStrategy(): Unit = {
     componentsList.par.foreach(actor => {
       actor ! StartConnection()
-      log.debug(s"[Actor (${self.path.name})]: sends start connection to ${actor.path.name}")
+      log.debug(s"sends start connection to ${actor.path.name}")
     })
   }
 
@@ -22,6 +22,6 @@ class MasterBootstrapHandlerActor(private val expected: Int) extends BootstrapHa
    */
   protected override def connectionPhaseCompleteStrategy(): Unit = {
     context.parent ! StartPopulating(componentsList)
-    log.debug(s"[Actor (${self.path.name})]: sends start populating to ${context.parent.path.name}")
+    log.debug(s"sends start populating to ${context.parent.path.name}")
   }
 }

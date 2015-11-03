@@ -27,18 +27,18 @@ abstract class BootstrapHandler(private val expected: Int) extends Actor with Ac
     case PhaseComplete(actor: ActorRef) =>
       if (!components.contains(actor)) {
         components += actor
-        log.debug(s"[Actor (${self.path.name})]: record the birth completion of ${actor.path.name}")
+        log.debug(s"record the birth completion of ${actor.path.name}")
 
         if (components.length == expected) {
           birthPhaseCompleteStrategy()
-          log.debug(s"[Actor (${self.path.name})]: executed birth complete strategy")
+          log.debug(s"executed birth complete strategy")
 
           components.clear()
           context.become(connectionPhaseReceive)
-          log.debug(s"[Actor (${self.path.name})]: enters in connection phase management")
+          log.debug(s"enters in connection phase management")
         } else {
           val remaining: Int = expected - components.length
-          log.debug(s"[Actor (${self.path.name})]: $remaining missing before the strategy application")
+          log.debug(s"$remaining missing before the strategy application")
         }
       }
   }
@@ -63,18 +63,18 @@ abstract class BootstrapHandler(private val expected: Int) extends Actor with Ac
     case PhaseComplete(actor: ActorRef) =>
       if (!components.contains(actor)) {
         components += actor
-        log.debug(s"[Actor (${self.path.name})]: record the connection completion of ${actor.path.name}")
+        log.debug(s"record the connection completion of ${actor.path.name}")
 
         if (components.length == expected) {
           connectionPhaseCompleteStrategy()
-          log.debug(s"[Actor (${self.path.name})]: executed connection complete strategy")
+          log.debug(s"executed connection complete strategy")
 
           components.clear()
           self ! PoisonPill
-          log.debug(s"[Actor (${self.path.name})]: terminate the bootstrap phase")
+          log.debug(s"terminate the bootstrap phase")
         } else {
           val remaining: Int = expected - components.length
-          log.debug(s"[Actor (${self.path.name})]: $remaining missing before the strategy application")
+          log.debug(s"$remaining missing before the strategy application")
         }
       }
   }

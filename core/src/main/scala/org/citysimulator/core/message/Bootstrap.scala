@@ -3,6 +3,7 @@ package org.citysimulator.core.message
 import akka.actor.ActorRef
 
 import org.citysimulator.core.business.map.District
+import org.citysimulator.core.business.vehicle.Vehicle
 
 /**
  * Defines the messages that the actors in the system exchange between them during the system bootstrap
@@ -51,11 +52,23 @@ object Bootstrap {
   case class StartConnection()
 
   /**
-   * The message inform the actor that it can start the population phase
+   * The message inform the actor that it must start populate the city with the vehicles
    *
    * @param actors [[Vector]] with the actor that must be populated
    */
   case class StartPopulating(actors: Vector[ActorRef])
+
+  /**
+   * The message inform the actor that the simulation must start
+   */
+  case class StartSimulation()
+
+  /**
+   * The message inform the actor that a vehicle must be parked before starting the simulation
+   *
+   * @param vehicles [[Vector]] with the [[Vehicle]] that must be parked
+   */
+  case class Populate(vehicles: Vector[Vehicle])
 
   /**
    * The message inform the actor that it is recognized as a valid host for the system

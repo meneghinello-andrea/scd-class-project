@@ -13,6 +13,6 @@ class SlaveShutdownHandlerActor extends ShutdownHandler {
    */
   protected def shutdownCompleteStrategy(): Unit = {
     context.parent ! PoisonPill
-    log.debug(s"[Actor (${self.path.name})]: terminate the slave actor")
+    log.debug(s"terminate the slave actor")
   }
 }

@@ -27,48 +27,48 @@ abstract class ShutdownHandler extends Actor with ActorLogging {
     case ActorIdentity(correlationId: Any, actor: Option[ActorRef]) =>
       if (actor.isDefined) {
         context.watch(actor.get)
-        log.debug(s"[Actor (${self.path.name})]: watch ${actor.get.path.name}")
+        log.debug(s"watch ${actor.get.path.name}")
 
         components += actor.get
-        log.debug(s"[Actor (${self.path.name})]: register ${actor.get.path.name}")
+        log.debug(s"register ${actor.get.path.name}")
       }
 
     case StartShutdown() =>
       if (components.isEmpty) {
         self ! PoisonPill
-        log.debug(s"[Actor (${self.path.name})]: all sub components terminated correctly so the manager terminate")
+        log.debug(s"all sub components terminated correctly so the manager terminate")
 
         shutdownCompleteStrategy()
-        log.debug(s"[Actor (${self.path.name})]: apply the shutdown strategy")
+        log.debug(s"apply the shutdown strategy")
       } else {
         components.par.foreach(actor => {
           actor ! StartShutdown()
-          log.debug(s"[Actor (${self.path.name})]: send shutdown message to ${actor.path.name}")
+          log.debug(s"send shutdown message to ${actor.path.name}")
         })
 
         context.become(shutdownPhaseReceive)
-        log.debug(s"[Actor (${self.path.name})]: enter in shutdown mode")
+        log.debug(s"enter in shutdown mode")
       }
 
     case Terminated(actor: ActorRef) =>
       context.unwatch(actor)
-      log.debug(s"[Actor (${self.path.name})]: unwatch ${actor.path.name}")
+      log.debug(s"unwatch ${actor.path.name}")
 
       components -= actor
-      log.debug(s"[Actor (${self.path.name})]: unregister ${actor.path.name}")
+      log.debug(s"unregister ${actor.path.name}")
 
       context.actorSelection(actor.path) ! Identify
-      log.debug(s"[Actor (${self.path.name})]: starts identification of the new reference of ${actor.path.name}")
+      log.debug(s"starts identification of the new reference of ${actor.path.name}")
 
     case WaitMeBeforeShuttingDown(actor: ActorRef) =>
       if (!components.contains(actor)) {
         context.watch(actor)
-        log.debug(s"[Actor (${self.path.name})]: watch ${actor.path.name}")
+        log.debug(s"watch ${actor.path.name}")
 
         components += actor
-        log.debug(s"[Actor (${self.path.name})]: register ${actor.path.name}")
+        log.debug(s"register ${actor.path.name}")
       } else {
-        log.debug(s"[Actor (${self.path.name})]: already watch ${actor.path.name}")
+        log.debug(s"already watch ${actor.path.name}")
       }
   }
 
@@ -84,20 +84,20 @@ abstract class ShutdownHandler extends Actor with ActorLogging {
   protected final def shutdownPhaseReceive: Receive = {
     case Terminated(actor: ActorRef) =>
       context.unwatch(actor)
-      log.debug(s"[Actor (${self.path.name})]: unwatch ${actor.path.name}")
+      log.debug(s"unwatch ${actor.path.name}")
 
       components -= actor
-      log.debug(s"[Actor (${self.path.name})]: unregister ${actor.path.name}")
+      log.debug(s"unregister ${actor.path.name}")
 
       if (components.isEmpty) {
         self ! PoisonPill
-        log.debug(s"[Actor (${self.path.name})]: start termination")
+        log.debug(s"start termination")
 
         shutdownCompleteStrategy()
-        log.debug(s"[Actor (${self.path.name})]: apply the shutdown strategy")
+        log.debug(s"apply the shutdown strategy")
       } else {
         val remaining: Int = components.length
-        log.debug(s"[Actor (${self.path.name})]: $remaining missing before the strategy application")
+        log.debug(s"$remaining missing before the strategy application")
       }
   }
 

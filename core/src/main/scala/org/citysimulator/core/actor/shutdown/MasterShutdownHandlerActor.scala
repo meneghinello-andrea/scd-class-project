@@ -10,6 +10,6 @@ class MasterShutdownHandlerActor extends ShutdownHandler {
    */
   protected def shutdownCompleteStrategy(): Unit = {
     context.system.terminate()
-    log.debug(s"[Actor (${self.path.name})]: terminate the system")
+    log.debug(s"terminate the system")
   }
 }

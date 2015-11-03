@@ -10,7 +10,6 @@ import scala.collection.mutable.ArrayBuffer
  * Implements the operations that make an actor observable by another actor in the system
  */
 trait ObservableActor { this: Actor with ActorLogging =>
-  protected val debugSubject: String = s"[Actor (${self.path.name})]"
   private val listeners: ArrayBuffer[ActorRef] = ArrayBuffer.empty[ActorRef]
 
   /**
@@ -28,7 +27,7 @@ trait ObservableActor { this: Actor with ActorLogging =>
    */
   protected def notifyEvent[T](event: T): Unit = {
     listeners.par.foreach(listener => listener ! event)
-    log.debug(s"$debugSubject: notified $event ")
+    log.debug(s"notified $event ")
   }
 
   /**
@@ -38,13 +37,13 @@ trait ObservableActor { this: Actor with ActorLogging =>
     case RegisterListener(listener: ActorRef) =>
       if (!listeners.contains(listener)) {
         listeners += listener
-        log.debug(s"$debugSubject: ${listener.path} registered as listener")
+        log.debug(s"${listener.path} registered as listener")
       } else {
-        log.debug(s"$debugSubject: ${listener.path} already registered as listener")
+        log.debug(s"${listener.path} already registered as listener")
       }
 
     case UnregisterListener(listener: ActorRef) =>
       listeners -= listener
-      log.debug(s"$debugSubject: ${listener.path} unregistered as listener")
+      log.debug(s"${listener.path} unregistered as listener")
   }
 }

@@ -2,18 +2,19 @@ package org.citysimulator.core.actor
 
 import akka.actor.{ActorLogging, Actor, Cancellable, PoisonPill}
 
-import org.citysimulator.core.business.citizen.{Citizen, CitizenAction}
+import org.citysimulator.core.business.citizen._
 import org.citysimulator.core.business.citizen.CitizenAction.CitizenAction
 import org.citysimulator.core.message.Crossroad.PrepareForTheTravel
 import org.citysimulator.core.message.Life._
 import org.citysimulator.core.message.Shutdown.StartShutdown
+import org.citysimulator.core.observable.ObservableActor
 
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 
 /**
  * The actor simulate the tasks that a [[Citizen]] do when it finish to travel
  */
-class LifeActor extends Actor with ActorLogging {
+class LifeActor extends Actor with ActorLogging with ObservableActor {
   import context.dispatcher
 
   private val schedule: scala.collection.mutable.Map[Citizen, Cancellable] =
@@ -29,16 +30,18 @@ class LifeActor extends Actor with ActorLogging {
     case MakeYourLife(citizen: Citizen, action: CitizenAction) =>
       action match {
         case CitizenAction.GO_TO_SLEEPING =>
+          citizen.status = CitizenStatus.SLEEPING
           val event: Cancellable = context.system.scheduler.scheduleOnce(SLEEP_TIME, self, ResumeTrip(citizen))
           schedule += (citizen -> event)
-          log.debug(s"[Actor (${self.path.name})]: ${citizen.name} starts sleeping")
+          log.debug(s"${citizen.name} starts sleeping")
 
           //TODO -> Notify GUI event
 
         case CitizenAction.GO_TO_WORK =>
+          citizen.status = CitizenStatus.WORKING
           val event: Cancellable = context.system.scheduler.scheduleOnce(WORK_TIME, self, ResumeTrip(citizen))
           schedule += (citizen -> event)
-          log.debug(s"[Actor (${self.path.name})]: ${citizen.name} starts working")
+          log.debug(s"${citizen.name} starts working")
 
           //TODO -> Notify GUI event
 
@@ -50,11 +53,11 @@ class LifeActor extends Actor with ActorLogging {
 
       if (event.isDefined) {
         event.get.cancel()
-        log.debug(s"[Actor (${self.path.name})]: cancel the old event relative to ${citizen.name}")
+        log.debug(s"cancel the old event relative to ${citizen.name}")
       }
 
       context.parent ! PrepareForTheTravel(citizen)
-      log.debug(s"[Actor (${self.path.name})]: ${citizen.name} wants to start a travel")
+      log.debug(s"${citizen.name} wants to start a travel")
 
     case StartShutdown() =>
       schedule.keys.par.foreach(citizen => {
@@ -62,19 +65,19 @@ class LifeActor extends Actor with ActorLogging {
 
         if (event.isDefined) {
           event.get.cancel()
-          log.debug(s"[Actor (${self.path.name})]: cancel the event relative to ${citizen.name}")
+          log.debug(s"cancel the event relative to ${citizen.name}")
         }
       })
 
       schedule.clear()
-      log.debug(s"[Actor (${self.path.name})]: clean the schedule")
+      log.debug(s"clean the schedule")
 
       self ! PoisonPill
-      log.debug(s"[Actor (${self.path.name})]: all planned event deleted so the actor terminate")
+      log.debug(s"all planned event deleted so the actor terminate")
   }
 
   /**
    * Manages the incoming messages that the actor receive
    */
-  override def receive: Receive = operationPhase
+  override def receive: Receive = observableReceive orElse operationPhase
 }
