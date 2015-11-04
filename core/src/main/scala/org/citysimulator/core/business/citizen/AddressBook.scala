@@ -4,7 +4,7 @@ package org.citysimulator.core.business.citizen
  * Memorize the addresses, associated to a key, where the [[Citizen]] that live in the city can perform their
  * programmed tasks
  */
-class AddressBook {
+case class AddressBook() {
   private val book: scala.collection.mutable.Map[String, String] = scala.collection.mutable.Map.empty[String, String]
 
   /**

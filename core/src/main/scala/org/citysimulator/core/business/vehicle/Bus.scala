@@ -9,7 +9,7 @@ import scala.collection.mutable.ArrayBuffer
  */
 case class Bus(id: String, run: String, capacity: Int, stopsList: Vector[String]) extends Vehicle {
   private val passengers: ArrayBuffer[Citizen] = ArrayBuffer.empty[Citizen]
-  private var stopsIterator: Iterator[String] = if (stopsList.nonEmpty) stopsList.iterator else Iterator.empty
+  private var nextStopIndex: Int = 0
 
   /**
    * Boards a citizen on the bus
@@ -75,10 +75,11 @@ case class Bus(id: String, run: String, capacity: Int, stopsList: Vector[String]
    */
   override def setNextStop(): Unit = {
     if (stopsList.nonEmpty) {
-      if (!stopsIterator.hasNext) {
-        stopsIterator = stopsList.iterator
+      if (nextStopIndex >= stopsList.length) {
+        nextStopIndex = 0
       }
-      programmedStop = stopsIterator.next()
+      programmedStop = stopsList(nextStopIndex)
+      nextStopIndex += 1
     } else {
       programmedStop = ""
     }

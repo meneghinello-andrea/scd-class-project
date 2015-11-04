@@ -39,7 +39,7 @@ object DistrictApplication {
           configuration.get("district.port").get.toInt)
 
         //Create the actor system
-        val name: String = configuration.get("city.name").get.replace('.', '-')
+        val name: String = configuration.get("district.name").get.split('.').last
         val systemConfiguration: Config = RemoteConfiguration.configure(host, ConfigFactory.load())
         val actorSystem: ActorSystem = ActorSystem(name, systemConfiguration)
 
