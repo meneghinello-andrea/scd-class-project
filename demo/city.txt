@@ -1,0 +1,3 @@
+city.name=manhattan
+city.host=127.0.0.1
+city.port=2552

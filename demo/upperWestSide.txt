@@ -1,0 +1,6 @@
+city.name=manhattan
+city.host=127.0.0.1
+city.port=2552
+district.name=manhattan.upper_west_side
+district.host=127.0.0.1
+district.port=2553
