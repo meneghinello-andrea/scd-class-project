@@ -23,18 +23,34 @@
 
 % Document cover
 \includepdf[pages={1}]{cover.pdf}
-\clearpage
+\clearpage{}
+
+\mbox{}
+\thispagestyle{empty}
+\newpage
 
 \input{chapters/abstract/abstract.tex}
 
 % Document indexes
-\printTOC{TRUE}
-\printTOF{TRUE}
-\printTOT{TRUE}
+\printListOfContents{TRUE}
+\printListOfFigures{TRUE}
+\printListOfTables{TRUE}
+%\clearpage{}
 
 % Document chapters
+\input{chapters/introduction/introduction.tex}
+\input{chapters/issues/issues.tex}
+\input{chapters/analysis/analysis.tex}
+\input{chapters/solution/solution.tex}
+\input{chapters/conclusion/conclusion.tex}
 
 % Glossary
-\clearpage
-\printGLO{TRUE}
+%\clearpage{}
+\printGlossary{FALSE}
+
+%appendix
+\begin{appendices}
+\addcontentsline{toc}{chapter}{Articolo relativo ad AODV}
+\includepdf[pages=-]{appendix-a.pdf}
+\end{appendices}
 \end{document}

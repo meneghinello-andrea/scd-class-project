@@ -5,9 +5,10 @@
 % necessary packages necessary to build correctly the final
 % document.
 %------------------------------------------------------------------------------
-\documentclass[paper=A4, fontsize=11pt, parskip=full]{scrreprt}
+\documentclass[paper=A4, fontsize=11pt, openright, parskip=full, twoside=semi]{scrreprt}
 
 \usepackage{acronym}
+\usepackage{caption}
 \usepackage{graphicx}
 \usepackage{ifthen}
 \usepackage{lastpage}
@@ -16,6 +17,8 @@
 \usepackage{pdfpages}
 \usepackage{sectsty}
 \usepackage{siunitx}
+\usepackage{subcaption}
+\usepackage[toc,page]{appendix}
 \usepackage[utf8]{inputenc}
 \usepackage[babel]{csquotes}
 \usepackage[T1]{fontenc}
@@ -24,13 +27,16 @@
 \usepackage[english, italian]{babel}
 \usepackage[nonumberlist, toc]{glossaries}
 \usepackage[protrusion=true, expansion=true]{microtype}
-\usepackage[automark, headsepline, footsepline, markuppercase]{scrpage2}
+\usepackage[automark, headsepline, markuppercase]{scrpage2}
 
-\allsectionsfont{\centering\normalfont\scshape}
+\allsectionsfont{\centering \normalfont\scshape}
 
 \pagestyle{scrheadings}
+\clearscrheadfoot{}
 
-\lehead{Sistemi Concorrenti e Distributi}
+\lehead{Sistemi concorrenti e distribuiti}
+%\rehead{Simulatore di traffico}
+%\lohead{Sistemi concorrenti e distribuiti}
 \rohead{Simulatore di traffico}
 \chead{}
 \cfoot{\thepage{} di \pageref{LastPage}}
@@ -40,13 +46,18 @@
 
 \newcommand{\english}[1]{\foreignlanguage{english}{\textit{#1}}}
 \newcommand{\keyword}[1]{\textbf{#1}}
-\newcommand{\printTOC}[1]{\ifthenelse{\equal{#1}{TRUE}}{\tableofcontents{}}{}}
-\newcommand{\printTOF}[1]{\ifthenelse{\equal{#1}{TRUE}}{\listoffigures{}}{}}
-\newcommand{\printTOT}[1]{\ifthenelse{\equal{#1}{TRUE}}{\listoftables{}}{}}
-\newcommand{\printGLO}[1]{\ifthenelse{\equal{#1}{TRUE}}{\printglossary[title=Glossario]{}}{}}
+\newcommand{\printListOfContents}[1]{\ifthenelse{\equal{#1}{TRUE}}{\tableofcontents{}}{}}
+\newcommand{\printListOfFigures}[1]{\ifthenelse{\equal{#1}{TRUE}}{\listoffigures{}}{}}
+\newcommand{\printListOfTables}[1]{\ifthenelse{\equal{#1}{TRUE}}{\listoftables{}}{}}
+\newcommand{\printGlossary}[1]{\ifthenelse{\equal{#1}{TRUE}}{\printglossary[title=Glossario]{}}{}}
 \newcommand{\glossarySng}[1]{\underline{\gls{#1}}}
 \newcommand{\glossaryPlr}[1]{\underline{\glspl{#1}}}
 
+\renewcommand{\thefigure}{\arabic{figure}}
+\renewcommand{\thetable}{\arabic{table}}
+\renewcommand\appendixname{Appendici}
+\renewcommand\appendixpagename{appendici}
+
 \input{configuration/acronymDatabase.tex}
 
-\input{configuration/glossaryDatabase.tex}
+%\input{configuration/glossaryDatabase.tex}

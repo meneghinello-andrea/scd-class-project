@@ -1,0 +1,177 @@
+%______________________________________________________________________________
+% issues.tex
+%
+% This illustrates the project's issues.
+%______________________________________________________________________________
+\chapter*{problematiche}
+\addcontentsline{toc}{chapter}{Problematiche}
+\label{problematiche}
+In questa sezione del documento sono illustrati i problemi riscontrati durante l'analisi del sistema richiesto. Tali problematiche sono derivanti dalla tipologia del sistema e dai requisiti esplicitati.
+
+\section*{tipologia del simulatore}
+\addcontentsline{toc}{section}{Tipologia del simulatore}
+\label{problematiche_tipologia_del_simulatore}
+Una delle caratteristiche prese in considerazione durante l'analisi del sistema è stata quella relativa al tipo di simulazione da implementare. Le tipologie di simulazione possono essere raggruppate in due macro categorie:
+
+\begin{itemize}
+\item{simulazione a \keyword{tempo continuo}}
+\item{simulazione a \keyword{tempo discreto}}
+\end{itemize}
+
+Un simulatore che effettui una simulazione a tempo continuo può essere paragonato ad una \keyword{macchina a stati}, in cui lo stato generale del sistema avanza solamente quando tutte le sue componenti hanno completato le proprie operazioni. Spesso, soprattutto in caso di simulatori complessi, non è possibile garantire un avanzamento \keyword{a tempo reale} (o \english{real-time}) perché il calcolo del singolo istante temporale richiede un tempo computazionalmente maggiore del periodo temporale rappresentato. Ciò accade poiché l'aggiornamento di stato richiede di aggiornare un numero di variabili che cresce esponenzialmente al crescere della dimensione del sistema.
+
+In caso di un simulatore che effettui una simulazione discreta della realtà rappresentata, l'avanzamento di stato avviene solamente quando quest'ultimo risulti essere necessario. Quindi, in questa tipologia di simulazione, non sono considerati tutti i possibili stati in cui il sistema può trovarsi, ma solamente quelli significativi per l'architettura del sistema. E' importante osservare che attraverso questa tipologia di simulazione il tempo di avanzamento non risulta più essere lineare in quanto le singole componenti, procedendo in simultanea per calcolare gli avanzamenti di stato, utilizzano risorse proprie per simularlo. Sarà perciò necessario utilizzare delle tecniche che consentano un riallineamento temporale.
+
+\section*{gestione del tempo}
+\addcontentsline{toc}{section}{Gestione del tempo}
+\label{problematiche_gestione_del_tempo}
+Un'ulteriore componente chiave da amministrare è la componente \keyword{tempo}. In questo tipo di simulazione lo scorrere del tempo viene utilizzato per calcolare correttamente il tratto di strada effettivamente percorso dai veicoli nel tragitto che collega due incroci consecutivi. Come per la precedente tematica, anche in questo caso si presentano due possibili scelte:
+
+\begin{itemize}
+\item{\english{clock} \keyword{assoluto}}
+\item{\english{clock} \keyword{relativo}}
+\end{itemize}
+
+Nel caso in cui il simulatore fosse implementato attraverso un \english{clock} assoluto allora ogni singola componente del sistema, avente bisogno di informazioni temporali per completare le proprie mansioni, si baserebbe su di una componente singola e centralizzata per ottenere il valore tempo, limitando fortemente il fattore `espansione' del sistema.
+
+Implementando invece il simulatore attraverso un \english{clock} relativo, ogni singola componente che necessita di informazioni temporali per completare le proprie mansioni usa un orologio proprio per scandire lo scorrere del tempo ed è in grado autonomamente di calcolare lo scorrere del tempo. Il tempo attuale viene calcolato come \english{offset} rispetto ad un \keyword{tempo zero} fissato per l'intero sistema.
+
+\section*{rappresentazione delle componenti}
+\addcontentsline{toc}{section}{Rappresentazione delle componenti}
+\label{problematiche_rappresentazione_delle_componenti}
+La città, intesa sia come insieme di quartieri e di incroci che la definiscono e sia come spazio fisico in cui persone e mezzi possano muoversi, deve possedere le seguenti caratteristiche:
+
+\begin{itemize}
+\item{deve essere assimilabile ad una città reale, indipendentemente dalla sua struttura;}
+\item{deve essere definibile in fase di configurazione del sistema;}
+\item{deve riprodurre fedelmente i limiti fisici dello spazio.}
+\end{itemize}
+
+Le persone che vivono all'interno del simulatore devono possedere una serie di parametri che sono definiti in fase di configurazione del sistema:
+
+\begin{itemize}
+\item{un indirizzo di casa (valido);}
+\item{un indirizzo di lavoro (valido);}
+\item{il tipo di veicolo, tra quelli effettivamente configurati, da utilizzare per spostarsi all'interno della città.}
+\end{itemize}
+
+Per quanto concerne i mezzi di trasporto, l'unico presentante necessità di configurazione, prima dell'avvio del sistema, è il mezzo `autobus', il quale deve possedere i seguenti parametri:
+
+\begin{itemize}
+\item{la capacità di carico;}
+\item{una lista di indirizzi (validi) presso cui effettuare le fermate;}
+\item{un nome identificativo della corsa;}
+\end{itemize}
+
+mentre le altre due tipologie sono gestibili direttamente dal sistema, sempre in fase di inizializzazione, secondo le esigenze specifiche delle diverse persone configurate.
+
+\subsection*{gestione dei nomi}
+\addcontentsline{toc}{subsection}{Gestione dei nomi}
+\label{problematiche_gestione_dei_nomi}
+La gestione dei nomi è una problematica facente parte della rappresentazione delle componenti. E' necessario identificare e conseguentemente adottare una \keyword{convenzione di nomenclatura} delle componenti che porti con se le seguenti proprietà:
+
+\begin{itemize}
+\item{consenta di identificare univocamente una componente;}
+\item{consenta l'estensibilità del sistema.}
+\end{itemize}
+
+Dato il requisito di distribuzione, le precedenti proprietà sono da considerarsi proprietà \keyword{effettivamente assunte dal sistema} al fine di garantirne la stabilità in fase di esecuzione e una maggiore estensibilità dello stesso.
+
+\section*{ricerca di un percorso}
+\addcontentsline{toc}{section}{Ricerca di un percorso}
+\label{problematiche_ricerca_di_un_percorso}
+Un'ulteriore problematica a cui è necessario prestare attenzione è quella relativa alla \keyword{ricerca di percorsi} (o \english{route}).
+
+Come per le precedenti problematiche anche per questa problematica si presentano diverse possibilità tra qui poter scegliere, possiamo:
+
+\begin{itemize}
+\item{non configurare alcuna \english{route};}
+\item{configurare \english{route} statiche;}
+\item{configurare \english{route} dinamiche.}
+\end{itemize}
+
+Nel caso il problema non fosse affrontato e si decidesse quindi di non impostare alcuna \english{route}, allora l'unica soluzione consisterebbe nel far scegliere al veicolo, di volta in volta, casualmente una strada e percorrerla. Questa strategia tuttavia \keyword{non garantisce} che un veicolo riesca a raggiungere la destinazione prefissata ottenendo quindi un simulatore che non rappresenta fedelmente la realtà modellata.
+
+Nel secondo caso invece, scegliendo di adottare la tecnica delle \english{route} statiche, esso effettuerebbe una simulazione più fedele della realtà. Sorge però il problema introdotto dal requisito di distribuzione, riguardante la \keyword{gestione di collegamenti interrotti}, che potrebbe causare l'isolamento di alcuni veicoli durante l'esecuzione della simulazione. Un veicolo si definisce isolato quando, dalla posizione in cui si trova, non possiede alcuna strada per raggiungere la destinazione prefissata. Adottando questa tecnica inoltre si delega l'onere della configurazione delle rotte a colui che effettivamente configura il sistema, ed essendo un'attività \keyword{meccanica} e potenzialmente \keyword{dispendiosa di tempo} (al crescere delle dimensioni del sistema) si possono facilmente introdurre errori che non consentirebbero al veicolo di raggiungere la propria destinazione.
+
+Infine, adottando l'uso di \english{route} dinamiche, si risolvono le problematiche introdotte dall'utilizzo delle tecniche precedentemente illustrate. Le \english{route} dinamiche si ottengono dotando il sistema un algoritmo di \english{routing}, il quale è in grado di calcolare il percorso per giungere ad una destinazione durante l'esecuzione della simulazione. Esistono diverse tipologie di algoritmi di \english{routing} effettivamente implementabili per il sistema in oggetto, ognuno con i propri pregi ed i propri difetti, ma tutti aventi una proprietà in comune: rendere la simulazione la più vicina possibile alla realtà modellata.
+
+\section*{concorrenza}
+\addcontentsline{toc}{section}{Concorrenza}
+\label{problematiche_concorrenza}
+I requisiti impongono che il simulatore abbia alcune componenti la cui esecuzione sia concorrente rispetto ad altre, ovvero che un insieme di processi siano in esecuzione nello stesso istante\footnote{E' opportuno ricordare la differenza che intercorre tra parallelismo simulato e reale} e che possano interagire tra di loro attraverso l'uso di risorse condivise.
+
+Tale condizione porta con sé diverse problematiche che devono essere prese in considerazione durante la fase di progettazione. Segue ora un elenco delle problematiche, inerenti alla tematica della concorrenza, affrontate durante la fase analisi.
+
+\subsection*{stalli}
+\addcontentsline{toc}{subsection}{Stalli}
+\label{problematiche_concorrenza_stalli}
+Una situazione di \keyword{stallo} (o \english{\keyword{deadlock}}) nel sistema avviene quando due o più processi si bloccano a vicenda aspettando che uno di essi compia un'azione necessaria all'altro e viceversa.
+
+Affinché uno stallo possa verificarsi nel sistema, è necessario che \keyword{simultaneamente} siano verificate le \keyword{condizioni di Havender}, ovvero:
+
+\begin{enumerate}
+\item{\keyword{mutua esclusione}: almeno una delle risorse di cui è composto il sistema deve essere \keyword{`non condivisibile'}. Nel caso del simulatore in oggetto deve essere garantito che solo un mezzo per volta possa attraversare l'incrocio per accedere alla strada che lo condurrà all'incrocio successivo;}
+\item{\keyword{accumulo incrementale}: i processi che risultino possidenti di una risorsa non devono trattenerla nell'attesa di accumularne altre;}
+\item{\keyword{impossibilità di prelazione}: ad un processo non può essere imposto il rilascio di una risorsa in suo possesso, ma il suddetto `rilascio' può avvenire solamente per decisione diretta del processo che la detiene;}
+\item{\keyword{attesa circolare}: avviene quando un \english{set} di processi (P\ped{1}, P\ped{2}, ..., P\ped{n}) sono in attesa di una risorsa posseduta da un altro processo creando una catena chiusa.}
+\end{enumerate}
+
+Le prime tre condizione elencate sono necessarie affinché una condizione di stallo si presenti mentre l'ultima è sia necessaria che sufficiente. Nel caso di una singola istanza, per ogni tipologia di risorsa, allora le condizioni diventano anche sufficienti per il verificarsi della condizione di \english{deadlock}.
+
+Possibili modi per evitare il \english{deadlock} in un sistema sono:
+
+\begin{itemize}
+\item{la reazione}
+\item{la prevenzione}
+\end{itemize}
+
+In caso si voglia che il sistema reagisca ad un \english{deadlock} è necessario innanzitutto identificarlo e successivamente attuare una rimozione forzata di uno dei processi che ne sono causa. Questa strategia è da sconsigliarsi in un sistema che abbia il compito di simulare il più fedelmente possibile il mondo reale, in quanto la sola verifica di avvenuto stallo risulta essere molto onerosa al crescere delle dimensioni del sistema. Un 'ulteriore problematica che porta con se questa possibilità riguarda la gestione dello stato interno dei processi. Esso dovrà essere ripristinato a seguito della rimozione forzata di uno dei processi causa del \english{deadlock}.
+
+La prevenzione avviene invece impedendo il verificarsi simultaneo delle condizioni di Havender durante la fase di progettazione di un sistema concorrente. La condizione, generalmente, più problematica è la condizione 4 ed essa può essere riconosciuta e quindi evitata  attraverso la costruzione e la successiva analisi di una struttura dati conosciuta con il nome di \keyword{grafo delle attese} (o grafo di Holt). Tale grafo mette tra di loro in relazione i processi, di cui è costituito il sistema, e le risorse di cui essi necessitano.
+
+\subsection*{viaggi fisicamente impossibili}
+\addcontentsline{toc}{subsection}{Viaggi fisicamente impossibili}
+\label{problematiche_concorrenza_viaggi_fisicamente_impossibilii}
+Nel caso del simulatore in oggetto è ragionevole paragonare i veicoli a processi concorrenti ed alla strada come una risorsa condivisa ai quali essi effettuano richiesta di accesso. Nella situazione appena descritta è opportuno garantire il corretto comportamento dei veicoli in situazioni di concorrenza, come ad esempio:
+
+\begin{itemize}
+\item{un veicolo (veicolo A) inizi a percorre la strada che collega due incroci consecutivi all'interno della città;}
+\item{il processo, avente in carico la gestione del veicolo A, venga pre-rilasciato dallo \english{scheduler} del sistema operativo sottostante;}
+\item{un ulteriore veicolo (veicolo B), con velocità di crociera inferiore a quella del veicolo A, richieda di percorrere la medesima strada in un istante temporale successivo a quando il veicolo A ha iniziato;}
+\item{il processo, avente in carico la gestione del veicolo B, riesca a terminare il percorso prima del veicolo A;}
+\item{il processo, avente in carico la gestione del veicolo A, ritorni in esecuzione e termini la percorrenza del tratto stradale in un istante temporalmente successivo a quello del processo che ha in gestione il veicolo B.}
+\end{itemize}
+
+Si è appena descritto un sorpasso tra veicoli che nella realtà non è fisicamente possibile.
+
+E' opportuno introdurre nel sistema meccanismi che \keyword{impediscano} il verificarsi di situazioni simili a quella appena descritta al fine di ottenere un sistema che sia il più possibile fedele alla realtà modellata.
+
+\section*{determinismo}
+\addcontentsline{toc}{section}{Determinismo}
+\label{problematiche_determinismo}
+Il determinismo è quella proprietà che un sistema possiede quando, partendo da uno stesso \english{set} di condizioni e applicando il medesimo \english{set} di operazioni il risultato ottenuto sia sempre il medesimo. Un sistema che possieda tale proprietà acquisisce di conseguenza anche la \keyword{predicibilità} in quanto è possibile predire a priori il risultato.
+
+Nel caso del sistema in oggetto il determinismo è una \keyword{proprietà desiderabile} in quanto consente il rispetto del codice stradale ai veicoli che viaggiano all'interno della città (precedenza agli incroci e viaggiare solamente tra strade/incroci consecutivi).
+
+Nonostante quanto appena affermato il \keyword{non determinismo} di alcune componenti non è cosa da evitare. Un esempio di comportamento non prevedibile è quello adottato dallo \english{scheduler} il quale, nonostante sia deterministico, è indipendente dalla simulazione e perciò non direttamente controllabile. Si presenta quindi la necessità di separare il simulatore dall'architettura del sistema operativo nel quale esso viene eseguito.
+
+\section*{distribuzione}
+\addcontentsline{toc}{section}{Distribuzione}
+\label{problematiche_distribuzione}
+Uno dei requisiti imposti è che il simulatore operi in modo \keyword{distribuito}, ovvero ripartendo il carico di lavoro su più computer interconnessi tra di loro da una infrastruttura di rete. Risulta perciò necessario, in fase di progettazione, individuare una \keyword{possibile separazione} delle componenti che consenta un corretto funzionamento del sistema.
+
+In seguito alla progettazione di tale suddivisione è necessario progettare dei \keyword{protocolli di comunicazione} tra le parti da utilizzarsi per:
+
+\begin{itemize}
+\item{l'inizializzazione del sistema;}
+\item{una corretta comunicazione tra le parti;}
+\item{la chiusura del sistema.}
+\end{itemize}
+
+\subsection*{recupero da fallimento}
+\addcontentsline{toc}{subsection}{Recupero da fallimento}
+\label{problematiche_distribuzione_recupero_da_fallimento}
+L'utilizzo di una infrastruttura di rete, per consentire la comunicazione fra le parti del sistema, introduce una una nuova problematica: il \keyword{recupero da fallimento}. 
+
+La rete che interconnette tra di loro i computer è struttura di per sé inaffidabile, in quanto progettata per reagire a fallimenti di comunicazione. E' quindi necessario implementare degli accorgimenti che siano in grado di reagire ad un eventuale fallimento di una parte del sistema, sia essa dipendente dalla rete sottostante oppure da un errore \english{software}.
