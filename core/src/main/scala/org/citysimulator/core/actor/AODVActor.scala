@@ -1,6 +1,6 @@
 package org.citysimulator.core.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef, PoisonPill, Terminated}
+import akka.actor._
 import akka.util.Timeout
 
 import org.citysimulator.core.constants.AODV._
@@ -26,6 +26,23 @@ class AODVActor(addressName: String, neighborsList: Vector[Host]) extends Actor 
    * Manages the incoming messages that the actor receive when it is in connection phase
    */
   protected def connectionPhase: Receive = {
+    case ActorIdentity(correlationId: Any, actor: Option[ActorRef]) =>
+      if (actor.isDefined && !neighbors.contains(actor.get)) {
+        neighbors += actor.get
+        log.info(s"memorized the remote reference to ${actor.get.path}")
+
+        context.watch(actor.get)
+        log.debug(s"watch life behavior of ${actor.get.path.name}")
+
+        if (neighbors.length == neighborsList.length) {
+          context.parent ! ConnectionComplete(self)
+          log.debug(s"parent informed about the completion of the connection sub phase")
+
+          context.become(faultTolerantPhase orElse operationPhase)
+          log.debug(s"enters in operation mode")
+        }
+      }
+
     case StartConnection() =>
       neighborsList.par.foreach(neighborAddress => {
         val addressComponents: Array[String] = neighborAddress.name.split('.')
@@ -34,23 +51,11 @@ class AODVActor(addressName: String, neighborsList: Vector[Host]) extends Actor 
         val actorSystemPort: Int = neighborAddress.port
         val crossroadName: String = addressComponents.last
         val actorPath: String =
-          s"""akka.tcp://$actorSystemName@$actorSystemAddress:$actorSystemPort/user/$actorSystemName/$crossroadName"""
+          s"""akka.tcp://$actorSystemName@$actorSystemAddress:$actorSystemPort/user/$actorSystemName/$crossroadName/routing"""
         log.debug(s"start search of $actorPath}")
 
-        for (neighbor <- context.actorSelection(actorPath).resolveOne()) {
-          neighbors += neighbor
-          log.debug(s"memorized the remote reference to ${neighbor.path.name}")
-
-          context.watch(neighbor)
-          log.debug(s"watch life behavior of ${neighbor.path.name}")
-        }
+        context.actorSelection(actorPath) ! Identify(None)
       })
-
-      context.parent ! ConnectionComplete(self)
-      log.debug(s"parent informed about the completion of the connection sub phase")
-
-      context.become(faultTolerantPhase orElse operationPhase)
-      log.debug(s"enters in operation mode")
   }
 
   /**
@@ -92,11 +97,11 @@ class AODVActor(addressName: String, neighborsList: Vector[Host]) extends Actor 
       if (timeToLive > 0) {
         if (address.equals(addressName)) {
           //I'm the searched address
-          self ! RouteResponse(address, self, TIME_TO_LIVE)
+          self ! RouteResponse(address, context.parent, TIME_TO_LIVE)
           log.debug(s"I'm the destination RREP for $address sent")
         } else {
           //I'm not the searched address
-          neighbors.filter(neighbor => neighbor != self).par.foreach(neighbor => {
+          neighbors.filter(neighbor => neighbor != sender()).par.foreach(neighbor => {
             neighbor ! RouteRequest(address, timeToLive - 1)
             log.debug(s"sent RREQ for $address to ${neighbor.path.name}")
           })
@@ -104,15 +109,16 @@ class AODVActor(addressName: String, neighborsList: Vector[Host]) extends Actor 
       }
 
     case RouteResponse(address: String, nextHop: ActorRef, timeToLive: Int) =>
-      routingTable.update(address, nextHop)
+      //routingTable.update(address, nextHop)
       log.debug(s"updated local routing table ($address, ${nextHop.path.name})")
 
       context.parent ! RouteFound(address, nextHop)
       log.debug(s"parent informed about the route for $address")
 
       if (timeToLive > 0) {
-        neighbors.filter(neighbor => neighbor != self).par.foreach(neighbor => {
-          neighbor ! RouteResponse(address, self, timeToLive - 1)
+        neighbors.filter(neighbor => neighbor != sender()).par.foreach(neighbor => {
+          neighbor ! RouteResponse(address, context.parent, timeToLive - 1)
+          log.debug(s"sent RESP for $address to ${neighbor.path}")
         })
       }
 

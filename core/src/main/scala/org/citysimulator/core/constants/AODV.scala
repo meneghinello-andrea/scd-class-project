@@ -13,5 +13,5 @@ object AODV {
   /**
    * Time To Live (TTL) of the routing algorithm packages before they die
    */
-  val TIME_TO_LIVE: Int = 15
+  val TIME_TO_LIVE: Int = 8
 }

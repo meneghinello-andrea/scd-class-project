@@ -67,7 +67,7 @@ class TravelActor extends Actor with ActorLogging with ObservableActor {
 
       if (vehicle.travelProgress >= 100) {
         neighbor ! Cross(vehicle)
-        log.debug(s"pass the vehicle to the neighbor crossroad ${neighbor.path.name}")
+        log.info(s"pass the ${vehicle.toString} to the neighbor crossroad ${neighbor.path}")
       } else {
         vehicle match {
           case bus: Bus =>

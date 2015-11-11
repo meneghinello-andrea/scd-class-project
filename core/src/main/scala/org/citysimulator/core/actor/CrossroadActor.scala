@@ -26,7 +26,7 @@ import scala.collection.mutable.ArrayBuffer
 class CrossroadActor(crossroad: Crossroad) extends Actor with ActorLogging with ObservableActor {
   private val busStop: ArrayBuffer[Citizen] = ArrayBuffer.empty[Citizen]
   private val garage: ArrayBuffer[Vehicle] = ArrayBuffer.empty[Vehicle]
-  private val park: ArrayBuffer[Vehicle] = ArrayBuffer.empty[Vehicle]
+  private var park: ArrayBuffer[Vehicle] = ArrayBuffer.empty[Vehicle]
 
   private val life: ActorRef = context.actorOf(Props[LifeActor], "life")
   private val routing: ActorRef = context.actorOf(Props(new AODVActor(crossroad.name, crossroad.neighborsList)), "routing")
@@ -56,7 +56,6 @@ class CrossroadActor(crossroad: Crossroad) extends Actor with ActorLogging with 
       log.debug(s"park ${vehicle.toString}")
 
     case StartConnection() =>
-      log.debug("QUI -> QUI")
       routing ! StartConnection()
       log.debug(s"send connection message to routing")
 
@@ -78,6 +77,7 @@ class CrossroadActor(crossroad: Crossroad) extends Actor with ActorLogging with 
    */
   protected def operationPhaseReceive: Receive = {
     case Cross(vehicle: Vehicle) =>
+      log.info(s"enter ${vehicle.toString}")
       if (vehicle.nextStop.equals(crossroad.name)) {
         vehicle match {
           case bus: Bus =>
@@ -143,6 +143,9 @@ class CrossroadActor(crossroad: Crossroad) extends Actor with ActorLogging with 
 
             garage += pawn
         }
+      } else {
+        park += vehicle
+        routing ! FindRoute(vehicle.nextStop)
       }
 
     case PrepareForTheTravel(citizen: Citizen) =>
@@ -179,12 +182,13 @@ class CrossroadActor(crossroad: Crossroad) extends Actor with ActorLogging with 
       }
 
     case RouteFound(address: String, nextHop: ActorRef) =>
-      val vehicles: Vector[Vehicle] = garage.filter(vehicle => vehicle.nextStop.equals(address)).toVector
+      val vehicles: Vector[Vehicle] = park.filter(vehicle => vehicle.nextStop.equals(address)).toVector
 
-      park --= vehicles
+      park = park --= vehicles
 
       vehicles.par.foreach(vehicle => {
         travel ! NewTravel(vehicle, nextHop)
+        log.debug(s"${vehicle.toString} start travel to reach ${nextHop.path}")
       })
 
     case StartShutdown() =>
