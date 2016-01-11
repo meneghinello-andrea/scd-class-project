@@ -14,7 +14,8 @@ CHAPTERS						= chapters/abstract/abstract.tex \
 								  chapters/issues/issues.tex \
 								  chapters/analysis/analysis.tex \
 								  chapters/solution/solution.tex \
-								  chapters/conclusion/conclusion.tex
+								  chapters/conclusion/conclusion.tex \
+								  appendix/setup/setup.tex
 
 .PHONY: clean clean_cover clean_master
 

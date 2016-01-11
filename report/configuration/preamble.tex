@@ -13,6 +13,7 @@
 \usepackage{ifthen}
 \usepackage{lastpage}
 \usepackage{longtable}
+\usepackage{listings}
 \usepackage{multirow}
 \usepackage{pdfpages}
 \usepackage{sectsty}
@@ -28,6 +29,15 @@
 \usepackage[nonumberlist, toc]{glossaries}
 \usepackage[protrusion=true, expansion=true]{microtype}
 \usepackage[automark, headsepline, markuppercase]{scrpage2}
+
+\lstset{
+ language=XML,
+ basicstyle=\scriptsize,
+ captionpos=b,
+ numbers=left,
+ numbersep=5pt,
+ numberstyle=\tiny,
+ stepnumber=4}
 
 \allsectionsfont{\centering \normalfont\scshape}
 
