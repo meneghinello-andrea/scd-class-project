@@ -1,0 +1,50 @@
+%--------------------------------------------------------------------------------------------------
+% preamble.tex
+%
+% This is the document preamble. It contains a reference to all the necessary libraries and
+% settings to correctly compile the document.
+%
+% author: Andrea Meneghinello
+% version: 0.1
+%--------------------------------------------------------------------------------------------------
+\pdfminorversion=4
+\documentclass[compress]{beamer}
+
+%
+% Theme used by the presentation
+%
+\usetheme{Padova}
+
+%
+% Import of the necessary packges
+%
+\usepackage{color}
+\usepackage{latexsym}
+\usepackage{subfigure}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+%
+% Information used to build the frontespiece of the presentation
+%
+\title{Miglioramenti al simulatore\\di traffico cittadino}
+\subtitle{\footnotesize{Laurea magistrale in Informatica -- corso di Sistemi Concorrenti e Distribuiti}}
+\author{\footnotesize{Presentatore: Andrea Meneghinello}}
+\date{\vspace{0mm}\scriptsize{Lunedì 25 gennaio 2016}}
+
+%
+% Override of latex default command
+%
+\renewcommand{\figurename}{Fig.}
+
+%
+% Colors definition
+%
+\definecolor{redMorass}{RGB}{155,0,20}
+
+%
+%	Padova theme settings
+%
+\useoutertheme[subsection=false]{miniframes}
+\setbeamercolor*{palette tertiary}{fg=white,bg=redMorass}

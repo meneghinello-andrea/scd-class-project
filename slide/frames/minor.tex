@@ -1,0 +1,38 @@
+%--------------------------------------------------------------------------------------------------
+% improvements.tex
+%
+% This document define the section that iiilustrate minor improvements to the simualtor
+%
+% author: Andrea Meneghinello
+% version: 0.1
+%--------------------------------------------------------------------------------------------------
+\section{Miglioramenti minori}
+\begin{frame}{Miglioramenti minori}
+	\begin{columns}
+		\begin{column}{0.7\textwidth}
+			Lavori futuri:
+			\begin{itemize}
+				\item{\footnotesize{migliorare l'algoritmo di routing}}
+				\begin{itemize}
+					\item{\scriptsize{evitare possibili ``loop''}}
+					\begin{itemize}
+						\item{\tiny{``sequence number'' del protocollo AODV}}
+						\item{\tiny{``invecchiamento route''}}
+					\end{itemize}
+				\end{itemize}
+				\item{\footnotesize{shutdown}}
+				\begin{itemize}
+					\item{\scriptsize{necessario protocollo a due fasi}}
+					\begin{itemize}
+						\item{\tiny{fase 1: chisura dell'overlay network}}
+						\item{\tiny{fase 2: terminazione attori}}
+					\end{itemize}
+				\end{itemize}
+			\end{itemize}
+		\end{column}
+		\begin{column}{0.3\textwidth}
+			\centering
+			\includegraphics[scale=0.2]{images/improvements.png}
+		\end{column}
+	\end{columns}
+\end{frame}
